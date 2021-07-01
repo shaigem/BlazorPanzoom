@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.JSInterop;
 
-namespace BlazorPanZoom
+namespace BlazorPanzoom
 {
-    public class BlazorPanZoom : ComponentBase, IPanZoom
+    public class Panzoom : ComponentBase, IPanzoom
     {
         private IJSObjectReference _jsPanzoomReference;
 
         public ElementReference ElementReference;
         [Inject] private IJSRuntime JsRuntime { get; set; }
-        [Parameter] public RenderFragment<BlazorPanZoom> ChildContent { get; set; }
+        [Parameter] public RenderFragment<Panzoom> ChildContent { get; set; }
 
         public async ValueTask ZoomInAsync() => await _jsPanzoomReference.InvokeVoidAsync("zoomIn");
 
@@ -23,7 +23,7 @@ namespace BlazorPanZoom
 
         public async ValueTask ZoomToPointAsync(double toScale, double toX, double toY) =>
             await _jsPanzoomReference.InvokeVoidAsync("zoomToPoint", toScale, toX, toY);
-
+        public async ValueTask<double> GetScaleAsync() => await _jsPanzoomReference.InvokeAsync<double>("getScale");
         public async ValueTask ResetAsync() => await _jsPanzoomReference.InvokeVoidAsync("reset");
         public async ValueTask DestroyAsync() => await _jsPanzoomReference.InvokeVoidAsync("destroy");
         
@@ -48,7 +48,7 @@ namespace BlazorPanZoom
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        private async ValueTask<IJSInProcessObjectReference> CreatePanzoomAsync(ElementReference element) =>
-            await JsRuntime.InvokeAsync<IJSInProcessObjectReference>("blazorPanzoom.createPanzoom", element);
+        private async ValueTask<IJSObjectReference> CreatePanzoomAsync(ElementReference element) =>
+            await JsRuntime.InvokeAsync<IJSObjectReference>("blazorPanzoom.createPanzoom", element);
     }
 }

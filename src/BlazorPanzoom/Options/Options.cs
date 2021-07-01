@@ -1,4 +1,4 @@
-﻿namespace BlazorPanZoom.Options
+﻿namespace BlazorPanzoom
 {
     public enum Contain
     {

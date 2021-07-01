@@ -1,21 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
+        <ResolveStaticWebAssetsInputsDependsOn>
+            $(ResolveStaticWebAssetsInputsDependsOn);
+        </ResolveStaticWebAssetsInputsDependsOn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Title>BlazorPanzoom</Title>
+        <Authors>Ronnie Tran and Contributors</Authors>
+        <RepositoryUrl>https://github.com/shaigem/BlazorPanzoom</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+    
+    <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-
     <ItemGroup>
-        <SupportedPlatform Include="browser" />
+        <SupportedPlatform Include="browser"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.7"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot" />
+        <Folder Include="wwwroot"/>
     </ItemGroup>
 
 </Project>
