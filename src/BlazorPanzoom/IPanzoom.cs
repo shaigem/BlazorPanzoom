@@ -3,14 +3,16 @@ using System.Threading.Tasks;
 
 namespace BlazorPanzoom
 {
-    public interface IPanzoom : IAsyncDisposable
+    public interface IPanzoom
     {
-        ValueTask ZoomInAsync(); 
-        ValueTask PanAsync(double toX, double toY);
+        ValueTask ZoomInAsync();
+        ValueTask ZoomOutAsync();
         ValueTask ZoomAsync(double toScale);
-        ValueTask ZoomToPointAsync(double toScale, double toX, double toY);
-        ValueTask<double> GetScaleAsync();
+        ValueTask ResetAsync(PanzoomOptions resetOptions);
         ValueTask ResetAsync();
+        ValueTask SetOptionsAsync(PanzoomOptions options);
+        ValueTask<PanzoomOptions> GetOptionsAsync();
+        ValueTask<double> GetScaleAsync();
         ValueTask DestroyAsync();
     }
 }

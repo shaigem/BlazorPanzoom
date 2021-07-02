@@ -1,12 +1,13 @@
 ﻿window.blazorPanzoom = {
-    createPanzoom: function (element) {
-        const panzoom = Panzoom(element, {
-            contain: "outside",
-            maxScale: 4
-        })
-        element.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
-        return panzoom
+    createPanzoomForReference: function (element, options) {
+        return Panzoom(element, options)
     },
+    createPanzoomForId: function (id) {
+        const element = document.getElementById(id)
+        return Panzoom(element)
+    },
+    createPanzoomForSelector: function (selector) {
+        const element = document.querySelector(selector)
+        return Panzoom(element)
+    }
 }
-
-

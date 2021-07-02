@@ -1,0 +1,72 @@
+﻿<Demo Title="Panning and zooming">
+    <div class="buttons">
+        <button @onclick="OnZoomInClick">Zoom in</button>
+        <button @onclick="OnZoomOutClick">Zoom out</button>
+        <button @onclick="OnResetClick">Reset</button>
+        <input type="range" min="0.1" max="4" step="0.1" @bind-value="RangeValue" @bind-value:event="oninput"/>
+        <input id="disable-pan" type="checkbox" @bind="PanEnabled"/>
+        <label htmlFor="disable-pan">Enable panning</label>
+    </div>
+
+    <div class="panzoom-parent">
+        <Panzoom @ref="_panzoom">
+            <div @ref="@context.ElementReference" class="panzoom">
+                <img style="width: 400px; height: 400px" src="awesome_tiger.svg" alt="image"/>
+            </div>
+        </Panzoom>
+    </div>
+</Demo>
+
+@code {
+
+    private double _rangeValue = 1.0;
+
+    private double RangeValue
+    {
+        get => _rangeValue;
+        set
+        {
+            _rangeValue = value;
+            _panzoom.ZoomAsync(value);
+        }
+    }
+
+    private bool _panEnabled = true;
+
+    private bool PanEnabled
+    {
+        get => _panEnabled;
+        set
+        {
+            _panEnabled = value;
+            _panzoom.SetOptionsAsync(new PanzoomOptions(disablePan: !_panEnabled));
+        }
+    }
+
+    private Panzoom _panzoom;
+
+    private async Task OnZoomInClick(MouseEventArgs args)
+    {
+        await _panzoom.ZoomInAsync();
+        await UpdateSlider();
+    }
+
+    private async Task OnZoomOutClick(MouseEventArgs args)
+    {
+        await _panzoom.ZoomOutAsync();
+        await UpdateSlider();
+    }
+
+    private async Task OnResetClick(MouseEventArgs args)
+    {
+        await _panzoom.ResetAsync();
+        await UpdateSlider();
+    }
+
+    private async Task UpdateSlider()
+    {
+        var scale = await _panzoom.GetScaleAsync();
+        _rangeValue = scale;
+    }
+
+}

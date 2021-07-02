@@ -1,24 +1,16 @@
 ﻿<div class="demo">
-
-    <a id="@Title"
-       href="hi"
-       style="text-decoration: none; color: black;">
-        <h2>@Title</h2>
-    </a>
+    <h2 style="text-decoration: none; color: black;">@Title</h2>
     <code>@Code</code>
     <p>@SubTitle</p>
     <div class="live-example">
         @ChildContent
     </div>
-
-
 </div>
 
 @code {
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
-
 
     [Parameter]
     public string Title { get; set; }
