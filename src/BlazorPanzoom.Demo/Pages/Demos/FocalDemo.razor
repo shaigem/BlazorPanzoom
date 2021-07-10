@@ -1,0 +1,33 @@
+﻿@page "/focal"
+
+<Demo Title="Panning and focal-point zooming (shift + mousewheel)">
+    <div class="buttons">
+        <button @onclick="OnResetClick">Reset</button>
+    </div>
+
+    <div class="panzoom-parent" style="border-width: 10px;">
+        <Panzoom @ref="_panzoom"  PanzoomOptions="@(new() {Canvas = true})" AddWheelZoom="true" OnWheel="@OnWheel">
+            <div @ref="@context.ElementReference" class="panzoom" style="width: 400px; height: 400px; margin: 0 auto;">
+                <img style="width: 100%; height: 100%;" src="target.png" alt="image"/>
+            </div>
+        </Panzoom>
+    </div>
+</Demo>
+
+@code {
+
+    private Panzoom _panzoom;
+
+    private async Task OnResetClick(MouseEventArgs args) => await _panzoom.ResetAsync();
+
+    private async Task OnWheel(PanzoomWheelEventArgs args)
+    {
+        // zoom only when holding shift key
+        if (!args.ShiftKey)
+        {
+            return;
+        }
+        await _panzoom.ZoomWithWheel(args);
+    }
+
+}

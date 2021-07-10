@@ -1,4 +1,6 @@
-﻿<Demo Title="Panning and zooming">
+﻿@page "/"
+
+<Demo Title="Panning and zooming">
     <div class="buttons">
         <button @onclick="OnZoomInClick">Zoom in</button>
         <button @onclick="OnZoomOutClick">Zoom out</button>
@@ -39,7 +41,7 @@
         set
         {
             _panEnabled = value;
-            _panzoom.SetOptionsAsync(new PanzoomOptions(disablePan: !_panEnabled));
+           // _panzoom.SetOptionsAsync(new PanzoomOptions(disablePan: !_panEnabled));
         }
     }
 

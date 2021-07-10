@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace BlazorPanzoom
 {
@@ -8,6 +7,10 @@ namespace BlazorPanzoom
         ValueTask ZoomInAsync();
         ValueTask ZoomOutAsync();
         ValueTask ZoomAsync(double toScale);
+
+        ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
+            IZoomOnlyOptions? overridenZoomOptions);
+
         ValueTask ResetAsync(PanzoomOptions resetOptions);
         ValueTask ResetAsync();
         ValueTask SetOptionsAsync(PanzoomOptions options);
