@@ -34,9 +34,9 @@ jobs:
      # Publish
       - name: Publish .NET Core Project
         run: dotnet publish src/BlazorPanzoom.Demo/BlazorPanzoom.Demo.csproj -c Release -o build --nologo
-  # Publish the website
+        
+     # Publish the website
       - name: GitHub Pages action
-        if: ${{ github.ref == 'refs/heads/main' }} # Publish only when the push is on master
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
