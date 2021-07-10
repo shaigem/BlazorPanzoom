@@ -8,7 +8,7 @@
     </div>
 
     <div class="panzoom-parent" style="height: 900px">
-        <Panzoom @ref="_panzoom" PanzoomOptions="@(new() {Contain = Contain.Outside, StartScale = 1.5})">
+        <Panzoom @ref="_panzoom" PanzoomOptions="@(new PanzoomOptions {Contain = Contain.Outside, StartScale = 1.5})">
             <div style="background: rgb(0, 0, 0) none repeat scroll 0 0;
                         width: 900px;
                         height: 900px;
