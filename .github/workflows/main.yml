@@ -33,9 +33,14 @@ jobs:
       - name: Publish .NET Core Project
         run: dotnet publish src/BlazorPanzoom.Demo/BlazorPanzoom.Demo.csproj -c Release -o build --nologo
         
+     # Add .nojekyll file so GitHub will read files/folders with underscores
+      - name: Add .nojekyll File
+        run: touch build/wwwroot/.nojekyll
+        
      # Publish the website
-      - name: GitHub Pages action
+      - name: GitHub Pages Deploy Action
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           branch: gh-pages
           folder: build/wwwroot
+        
