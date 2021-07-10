@@ -1,0 +1,11 @@
+﻿@page "/inside"
+
+<Demo Title="Containment within the parent">
+    <div class="panzoom-parent">
+        <Panzoom PanzoomOptions="@(new() {Contain = Contain.Inside})">
+            <div style="border: 2px dotted; width: 400px; margin: 0 auto" @ref="@context.ElementReference" class="panzoom">
+                <img style="width: 100%; height: 100%" src="awesome_tiger.svg" alt="image"/>
+            </div>
+        </Panzoom>
+    </div>
+</Demo>

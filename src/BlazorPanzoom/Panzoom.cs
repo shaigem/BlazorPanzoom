@@ -21,72 +21,76 @@ namespace BlazorPanzoom
     public class Panzoom : ComponentBase, IPanzoom, IAsyncDisposable
     {
         private DotNetObjectReference<Panzoom>? _dotNetObjectReference = null;
-        private IJSObjectReference _jsPanzoomReference;
+        private IJSObjectReference? _jsPanzoomReference;
         public ElementReference ElementReference;
-        [Inject] private IJSRuntime JSRuntime { get; set; }
-        [Parameter] public RenderFragment<Panzoom> ChildContent { get; set; }
+
+        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+        [Parameter] public RenderFragment<Panzoom>? ChildContent { get; set; }
         [Parameter] public PanzoomOptions PanzoomOptions { private get; set; } = PanzoomOptions.DefaultOptions;
-        [Parameter] public bool AddWheelZoom { get; set; }
-        [Parameter] public EventCallback<PanzoomWheelEventArgs> OnWheel { get; set; }
+        [Parameter] public WheelHandler WheelHandler { private get; set; } = WheelHandler.None;
+        [Parameter] public EventCallback<PanzoomWheelEventArgs> OnWheel { private get; set; }
 
         public async ValueTask DisposeAsync()
         {
-            await JSRuntime.DisposePanzoomAsync(ElementReference, _jsPanzoomReference);
-            await DestroyAsync();
-            await _jsPanzoomReference.DisposeAsync();
+            if (_jsPanzoomReference is not null)
+            {
+                await JsRuntime.DisposePanzoomAsync(ElementReference, _jsPanzoomReference);
+                await DestroyAsync();
+                await _jsPanzoomReference.DisposeAsync();
+            }
         }
 
         public async ValueTask ZoomInAsync()
         {
-            await _jsPanzoomReference.InvokeVoidAsync("zoomIn");
+            await JsPanzoomInvokeVoidAsync("zoomIn");
         }
 
         public async ValueTask ZoomOutAsync()
         {
-            await _jsPanzoomReference.InvokeVoidAsync("zoomOut");
+            await JsPanzoomInvokeVoidAsync("zoomOut");
         }
 
         public async ValueTask ZoomAsync(double toScale)
         {
-            await _jsPanzoomReference.InvokeVoidAsync("zoom", toScale);
+            await JsPanzoomInvokeVoidAsync("zoom", toScale);
         }
 
         public async ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
             IZoomOnlyOptions? overridenZoomOptions = default)
         {
-            await _jsPanzoomReference.InvokeVoidAsync("zoomToPoint", toScale, new PointArgs(clientX, clientY),
+            await JsPanzoomInvokeVoidAsync("zoomToPoint", toScale, new PointArgs(clientX, clientY),
                 overridenZoomOptions);
         }
 
         public async ValueTask ResetAsync(PanzoomOptions resetOptions)
         {
             await
-                _jsPanzoomReference.InvokeVoidAsync("reset", resetOptions);
+                JsPanzoomInvokeVoidAsync("reset", resetOptions);
         }
 
         public async ValueTask ResetAsync()
         {
-            await _jsPanzoomReference.InvokeVoidAsync("reset");
+            await JsPanzoomInvokeVoidAsync("reset");
         }
 
         public async ValueTask SetOptionsAsync(PanzoomOptions options)
         {
-            await _jsPanzoomReference.InvokeVoidAsync("setOptions", options);
+            await JsPanzoomInvokeVoidAsync("setOptions", options);
         }
 
         public async ValueTask<PanzoomOptions> GetOptionsAsync()
         {
-            return await _jsPanzoomReference.InvokeAsync<PanzoomOptions>("getOptions");
+            return await JsPanzoomInvokeAsync<PanzoomOptions>("getOptions");
         }
 
         public async ValueTask<double> GetScaleAsync()
         {
-            return await _jsPanzoomReference.InvokeAsync<double>("getScale");
+            return await JsPanzoomInvokeAsync<double>("getScale");
         }
 
         public async ValueTask DestroyAsync()
         {
-            await _jsPanzoomReference.InvokeVoidAsync("destroy");
+            await JsPanzoomInvokeVoidAsync("destroy");
         }
 
         public async ValueTask ZoomWithWheel(PanzoomWheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
@@ -118,6 +122,11 @@ namespace BlazorPanzoom
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
+            if (ChildContent is null)
+            {
+                return;
+            }
+
             base.BuildRenderTree(builder);
             builder.AddContent(0, ChildContent(this));
         }
@@ -126,28 +135,59 @@ namespace BlazorPanzoom
         {
             if (firstRender)
             {
-                var hasElementReference = !ElementReference.Equals(default(ElementReference));
-                if (hasElementReference)
-                {
-                    _jsPanzoomReference = await JSRuntime.CreatePanzoomAsync(ElementReference, PanzoomOptions);
-
-                    if (AddWheelZoom)
-                    {
-                        if (OnWheel.HasDelegate)
-                            await RegisterCustomWheelListener();
-                        else
-                            await JSRuntime.RegisterWheelZoomAsync(ElementReference, _jsPanzoomReference);
-                    }
-                }
+                await InitializeJsPanzoom();
             }
 
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        private async Task InitializeJsPanzoom()
+        {
+            // TODO a JS panzoom object MUST be created and shouldn't be null!
+            var hasElementReference = !ElementReference.Equals(default(ElementReference));
+            if (hasElementReference)
+            {
+                _jsPanzoomReference = await JsRuntime.CreatePanzoomAsync(ElementReference, PanzoomOptions);
+                switch (WheelHandler)
+                {
+                    case WheelHandler.Custom when OnWheel.HasDelegate:
+                        await RegisterCustomWheelListener();
+                        break;
+                    case WheelHandler.ZoomOnScroll:
+                        await JsRuntime.RegisterDefaultWheelZoom(ElementReference, _jsPanzoomReference);
+                        break;
+                    case WheelHandler.None:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
         private async ValueTask RegisterCustomWheelListener()
         {
             _dotNetObjectReference ??= DotNetObjectReference.Create(this);
-            await JSRuntime.RegisterWheelListenerAsync(_dotNetObjectReference, ElementReference);
+            await JsRuntime.RegisterWheelListenerAsync(_dotNetObjectReference, ElementReference);
+        }
+
+        private async ValueTask JsPanzoomInvokeVoidAsync(string identifier, params object?[] args)
+        {
+            if (_jsPanzoomReference is null)
+            {
+                throw new NullReferenceException("JS Panzoom reference is null!");
+            }
+
+            await _jsPanzoomReference.InvokeVoidAsync(identifier, args);
+        }
+
+        private async ValueTask<T> JsPanzoomInvokeAsync<T>(string identifier, params object?[] args)
+        {
+            if (_jsPanzoomReference is null)
+            {
+                throw new NullReferenceException("JS Panzoom reference is null!");
+            }
+
+            return await _jsPanzoomReference.InvokeAsync<T>(identifier, args);
         }
     }
 }

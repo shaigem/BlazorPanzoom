@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components;
 
@@ -16,7 +17,7 @@ namespace BlazorPanzoom
         public double Y { get; }
     }
 
-    public static class OptionExtensions
+    internal static class OptionExtensions
     {
         public static string? AsString(this Contain contain)
         {
@@ -24,7 +25,18 @@ namespace BlazorPanzoom
             {
                 Contain.Inside => "inside",
                 Contain.Outside => "outside",
-                Contain.None => "none",
+                Contain.None => null,
+                _ => throw new ArgumentOutOfRangeException(nameof(contain), contain, "Invalid Contain value")
+            };
+        }
+
+        public static Contain AsContain(this string? contain)
+        {
+            return contain switch
+            {
+                "inside" => Contain.Inside,
+                "outside" => Contain.Outside,
+                null => Contain.None,
                 _ => throw new ArgumentOutOfRangeException(nameof(contain), contain, "Invalid Contain value")
             };
         }
@@ -68,7 +80,12 @@ namespace BlazorPanzoom
         public double GetStepOrDefault(double step = PanzoomOptions.DefaultStepScale);
     }
 
-    public record PanzoomOptions : IZoomOnlyOptions
+    public interface IPanOnlyOptions
+    {
+        public Contain GetContainOrDefault(Contain contain = Contain.None);
+    }
+
+    public record PanzoomOptions : IZoomOnlyOptions, IPanOnlyOptions
     {
         protected internal const double DefaultMinScale = 0.125;
         protected internal const double DefaultMaxScale = 4;
@@ -76,6 +93,8 @@ namespace BlazorPanzoom
 
         private static readonly PanzoomOptions Default = new();
         public static ref readonly PanzoomOptions DefaultOptions => ref Default;
+
+        private readonly Contain? _contain;
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -157,6 +176,15 @@ namespace BlazorPanzoom
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public double? Step { private get; init; }
 
+        [JsonInclude]
+        [JsonConverter(typeof(JsonCamelCaseStringEnumConverter))]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Contain? Contain
+        {
+            private get => _contain;
+            init => _contain = value is not null && value.Equals(BlazorPanzoom.Contain.None) ? null : value;
+        }
+
         public bool GetDisableZoomOrDefault(bool disableZoom = false)
         {
             return DisableZoom ?? disableZoom;
@@ -175,6 +203,11 @@ namespace BlazorPanzoom
         public double GetStepOrDefault(double step = DefaultStepScale)
         {
             return Step ?? step;
+        }
+
+        public Contain GetContainOrDefault(Contain contain = BlazorPanzoom.Contain.None)
+        {
+            return Contain ?? contain;
         }
     }
 }

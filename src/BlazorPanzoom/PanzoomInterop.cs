@@ -15,18 +15,11 @@ namespace BlazorPanzoom
                 jsRuntime.Invoke<IJSObjectReference>("createPanzoomForReference", element, options);
         }
 
-        public static async ValueTask<IJSObjectReference>
-            GetElementForSelector(this IJSRuntime jsRuntime, string selector)
-        {
-            return await
-                jsRuntime.Invoke<IJSObjectReference>("getElementForSelector", selector);
-        }
-
-        public static async ValueTask RegisterWheelZoomAsync(this IJSRuntime jsRuntime,
+        public static async ValueTask RegisterDefaultWheelZoom(this IJSRuntime jsRuntime,
             ElementReference elementReference,
             IJSObjectReference jsPanzoomReference)
         {
-            await jsRuntime.InvokeVoid("registerWheelZoom", elementReference, jsPanzoomReference);
+            await jsRuntime.InvokeVoid("registerDefaultWheelZoom", elementReference, jsPanzoomReference);
         }
 
         public static async ValueTask RegisterWheelListenerAsync(this IJSRuntime jsRuntime,

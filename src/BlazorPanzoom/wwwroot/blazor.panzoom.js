@@ -8,6 +8,10 @@
         return Panzoom(element, options)
     }
 
+    registerDefaultWheelZoom(element, panzoom) {
+        element.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
+    }
+
     registerWheelListener(dotnetReference, element) {
         element.parentElement.addEventListener('wheel', this.boundWheelListener = this.wheelHandler.bind(this, dotnetReference))
     }
