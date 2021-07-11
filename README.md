@@ -31,7 +31,7 @@ The list below shows which examples have been implemented.
 
 ## Installation
 
-...
+Will be published soon on Nuget...
 
 ## API Documentation
 
