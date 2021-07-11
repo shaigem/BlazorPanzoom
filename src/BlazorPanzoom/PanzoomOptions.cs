@@ -83,7 +83,8 @@ namespace BlazorPanzoom
     {
         public Contain GetContainOrDefault(Contain contain = Contain.None);
         public bool GetDisablePanOrDefault(bool disablePan = default);
-
+        public bool GetDisableXAxisOrDefault(bool disableXAxis = default);
+        public bool GetDisableYAxisOrDefault(bool disableYAxis = default);
     }
 
     public record PanzoomOptions : IZoomOnlyOptions, IPanOnlyOptions
@@ -185,9 +186,18 @@ namespace BlazorPanzoom
             private get => _contain;
             init => _contain = value is not null && value.Equals(BlazorPanzoom.Contain.None) ? null : value;
         }
+
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? DisablePan { private get; init; }
+
+        [JsonInclude]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public bool? DisableXAxis { private get; init; }
+
+        [JsonInclude]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public bool? DisableYAxis { private get; init; }
 
         public bool GetDisableZoomOrDefault(bool disableZoom = false)
         {
@@ -217,6 +227,16 @@ namespace BlazorPanzoom
         public bool GetDisablePanOrDefault(bool disablePan = default)
         {
             return DisablePan ?? disablePan;
+        }
+
+        public bool GetDisableXAxisOrDefault(bool disableXAxis = default)
+        {
+            return DisableXAxis ?? disableXAxis;
+        }
+
+        public bool GetDisableYAxisOrDefault(bool disableYAxis = default)
+        {
+            return DisableYAxis ?? disableYAxis;
         }
     }
 }
