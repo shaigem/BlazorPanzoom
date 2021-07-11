@@ -1,5 +1,5 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using BlazorPanzoom.Converters;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorPanzoom
@@ -16,50 +16,53 @@ namespace BlazorPanzoom
         public double Y { get; }
     }
 
-    internal static class OptionExtensions
+    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
+    public enum Cursor
     {
-        public static string? AsString(this Contain contain)
-        {
-            return contain switch
-            {
-                Contain.Inside => "inside",
-                Contain.Outside => "outside",
-                Contain.None => null,
-                _ => throw new ArgumentOutOfRangeException(nameof(contain), contain, "Invalid Contain value")
-            };
-        }
-
-        public static Contain AsContain(this string? contain)
-        {
-            return contain switch
-            {
-                "inside" => Contain.Inside,
-                "outside" => Contain.Outside,
-                null => Contain.None,
-                _ => throw new ArgumentOutOfRangeException(nameof(contain), contain, "Invalid Contain value")
-            };
-        }
-
-        public static string? AsString(this TransitionTimingFunction timingFunction)
-        {
-            return timingFunction switch
-            {
-                TransitionTimingFunction.Ease => "ease",
-                TransitionTimingFunction.Linear => "linear",
-                TransitionTimingFunction.EaseIn => "ease-in",
-                TransitionTimingFunction.EaseOut => "ease-out",
-                TransitionTimingFunction.EaseInOut => "ease-in-out",
-                _ => throw new ArgumentOutOfRangeException(nameof(timingFunction), timingFunction,
-                    "Invalid transition function")
-            };
-        }
+        [JsonPropertyName("alias")] Alias,
+        [JsonPropertyName("all-scroll")] AllScroll,
+        [JsonPropertyName("auto")] Auto,
+        [JsonPropertyName("cell")] Cell,
+        [JsonPropertyName("context-menu")] ContextMenu,
+        [JsonPropertyName("col-resize")] ColResize,
+        [JsonPropertyName("copy")] Copy,
+        [JsonPropertyName("crosshair")] CrossHair,
+        [JsonPropertyName("default")] Default,
+        [JsonPropertyName("e-resize")] EResize,
+        [JsonPropertyName("ew-resize")] EwResize,
+        [JsonPropertyName("grab")] Grab,
+        [JsonPropertyName("grabbing")] Grabbing,
+        [JsonPropertyName("help")] Help,
+        [JsonPropertyName("move")] Move,
+        [JsonPropertyName("n-resize")] NResize,
+        [JsonPropertyName("ne-resize")] NeResize,
+        [JsonPropertyName("nesw-resize")] NeswResize,
+        [JsonPropertyName("ns-resize")] NsResize,
+        [JsonPropertyName("nw-resize")] NwResize,
+        [JsonPropertyName("nwse-resize")] NwseResize,
+        [JsonPropertyName("no-drop")] NoDrop,
+        [JsonPropertyName("none")] None,
+        [JsonPropertyName("not-allowed")] NotAllowed,
+        [JsonPropertyName("pointer")] Pointer,
+        [JsonPropertyName("progress")] Progress,
+        [JsonPropertyName("row-resize")] RowResize,
+        [JsonPropertyName("s-resize")] SResize,
+        [JsonPropertyName("se-resize")] SeResize,
+        [JsonPropertyName("sw-resize")] SwResize,
+        [JsonPropertyName("text")] Text,
+        [JsonPropertyName("url")] Url,
+        [JsonPropertyName("w-resize")] WResize,
+        [JsonPropertyName("wait")] Wait,
+        [JsonPropertyName("zoom-in")] ZoomIn,
+        [JsonPropertyName("zoom-out")] ZoomOut,
     }
 
+    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum Contain
     {
-        Inside,
-        Outside,
-        None
+        [JsonPropertyName("inside")] Inside,
+        [JsonPropertyName("outside")] Outside,
+        [JsonPropertyName("none")] None
     }
 
     public enum TransitionTimingFunction
@@ -85,11 +88,9 @@ namespace BlazorPanzoom
         public bool GetDisablePanOrDefault(bool disablePan = default);
         public bool GetDisableXAxisOrDefault(bool disableXAxis = default);
         public bool GetDisableYAxisOrDefault(bool disableYAxis = default);
-        
+        public Cursor GetCursorOrDefault(Cursor cursor = Cursor.Move);
         public bool GetPanOnlyWhenZoomedOrDefault(bool panOnlyWhenZoomed = default);
         public bool GetRelativeOrDefault(bool relative = default);
-
-
     }
 
     public record PanzoomOptions : IZoomOnlyOptions, IPanOnlyOptions
@@ -184,7 +185,6 @@ namespace BlazorPanzoom
         public double? Step { private get; init; }
 
         [JsonInclude]
-        [JsonConverter(typeof(JsonCamelCaseStringEnumConverter))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Contain? Contain
         {
@@ -203,11 +203,15 @@ namespace BlazorPanzoom
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? DisableYAxis { private get; init; }
-        
+
+        [JsonInclude]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Cursor? Cursor { private get; init; }
+
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? PanOnlyWhenZoomed { private get; init; }
-        
+
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Relative { private get; init; }
@@ -250,6 +254,11 @@ namespace BlazorPanzoom
         public bool GetDisableYAxisOrDefault(bool disableYAxis = default)
         {
             return DisableYAxis ?? disableYAxis;
+        }
+
+        public Cursor GetCursorOrDefault(Cursor cursor = BlazorPanzoom.Cursor.Move)
+        {
+            return Cursor ?? cursor;
         }
 
         public bool GetPanOnlyWhenZoomedOrDefault(bool panOnlyWhenZoomed = default)
