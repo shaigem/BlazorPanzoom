@@ -16,15 +16,15 @@ s [demo page](https://timmywil.com/panzoom/demo/).
 
 The list below shows which examples have been implemented.
 
-#### Demo Example List (4/10):
+#### Demo Example List (5/10):
 
 - [x] [Panning and zooming](https://shaigem.github.io/BlazorPanzoom/)
 - [x] [Panning and focal-point zooming (shift + mousewheel)]
 - [ ] SVG support: move all the things!
 - [x] [Containment within the parent: contain = inside](https://shaigem.github.io/BlazorPanzoom/inside)
-- [x] [Containment within the parent: contain = outside](https://shaigem.github.io/BlazorPanzoom/within)
+- [x] [Containment within the parent: contain = outside](https://shaigem.github.io/BlazorPanzoom/outside)
 - [ ] Exclude elements within the Panzoom element from event handling
-- [ ] Disabling one axis
+- [x] [Disabling one axis](https://shaigem.github.io/BlazorPanzoom/oneaxis)
 - [ ] Adding on matrix functions to the transform
 - [ ] Adding a transform to a child
 - [ ] A Panzoom instance within another Panzoom instance
