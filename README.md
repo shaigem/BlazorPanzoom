@@ -119,7 +119,7 @@ Through the component:
 <Panzoom PanzoomOptions=@(new PanzoomOptions{DisablePan = true})"></Panzoom>
 ```
 
-Through the object (see [StandardDemo.razor]):
+Through the object (see [StandardDemo.razor #L44]):
 ```c#
 private Panzoom _panzoom;
 // ...
@@ -142,4 +142,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 [README #doc]: https://github.com/timmywil/panzoom/blob/39524b1ec721e5f7cabcabc4d7e467968dffe778/README.md#documentation
 [Panning and focal-point zooming (shift + mousewheel)]: https://shaigem.github.io/BlazorPanzoom/focal/
 [FocalDemo.razor]: https://github.com/shaigem/BlazorPanzoom/blob/49e7f72bb4fe3bc247dc80117858232ceef82b4e/src/BlazorPanzoom.Demo/Pages/Demos/FocalDemo.razor
-[StandardDemo.razor]: https://github.com/shaigem/BlazorPanzoom/blob/49e7f72bb4fe3bc247dc80117858232ceef82b4e/src/BlazorPanzoom.Demo/Pages/Demos/StandardDemo.razor
+[StandardDemo.razor #L44]: https://github.com/shaigem/BlazorPanzoom/blob/e687aa1b4670e962e0c5efed98f32292506cd624/src/BlazorPanzoom.Demo/Pages/Demos/StandardDemo.razor#L44
