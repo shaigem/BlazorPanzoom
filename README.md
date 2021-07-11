@@ -9,8 +9,6 @@ components/elements through CSS transformations.
 ## Demo Showcase
 **[View Demo App](https://shaigem.github.io/BlazorPanzoom/)**
 
-<img src="https://github.com/shaigem/BlazorPanzoom/blob/e8ed0b3240efa32902e1f425d7615792e3abb05d/docs/demo_app_main.png" alt="main demo app" width="70%"/>
-
 The demo app aims to implement all of the same examples from timmywil's panzoom'
 s [demo page](https://timmywil.com/panzoom/demo/).
 
