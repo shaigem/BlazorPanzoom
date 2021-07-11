@@ -109,7 +109,7 @@ See [FocalDemo.razor] and its corresponding demo [Panning and focal-point zoomin
 Our simple example image is now pannable and zoomable:
 
 ![A simple example image](https://github.com/shaigem/BlazorPanzoom/blob/f653196e926a8d661bb3a2507e331353c25028b2/docs/example_simple.png)
-
+* * *
 ### Passing Options via `PanzoomOptions`
 
 The `<Panzoom>` component allows you to set its options with the `PanzoomOptions` object.
