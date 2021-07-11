@@ -41,7 +41,7 @@
         set
         {
             _panEnabled = value;
-           // _panzoom.SetOptionsAsync(new PanzoomOptions(disablePan: !_panEnabled));
+            _panzoom.SetOptionsAsync(new PanzoomOptions {DisablePan = !_panEnabled});
         }
     }
 

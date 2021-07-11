@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components;
 
@@ -83,6 +82,8 @@ namespace BlazorPanzoom
     public interface IPanOnlyOptions
     {
         public Contain GetContainOrDefault(Contain contain = Contain.None);
+        public bool GetDisablePanOrDefault(bool disablePan = default);
+
     }
 
     public record PanzoomOptions : IZoomOnlyOptions, IPanOnlyOptions
@@ -184,6 +185,9 @@ namespace BlazorPanzoom
             private get => _contain;
             init => _contain = value is not null && value.Equals(BlazorPanzoom.Contain.None) ? null : value;
         }
+        [JsonInclude]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public bool? DisablePan { private get; init; }
 
         public bool GetDisableZoomOrDefault(bool disableZoom = false)
         {
@@ -208,6 +212,11 @@ namespace BlazorPanzoom
         public Contain GetContainOrDefault(Contain contain = BlazorPanzoom.Contain.None)
         {
             return Contain ?? contain;
+        }
+
+        public bool GetDisablePanOrDefault(bool disablePan = default)
+        {
+            return DisablePan ?? disablePan;
         }
     }
 }
