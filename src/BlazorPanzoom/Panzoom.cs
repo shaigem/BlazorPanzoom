@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -21,8 +22,14 @@ namespace BlazorPanzoom
     public class Panzoom : ComponentBase, IPanzoom, IAsyncDisposable
     {
         private DotNetObjectReference<Panzoom>? _dotNetObjectReference = null;
+        private HashSet<ElementReference>? _excludedElements = null;
         private IJSObjectReference? _jsPanzoomReference;
-        public ElementReference ElementReference;
+        public ElementReference ElementReference { private get; set; }
+
+        public ElementReference ExcludedElementReference
+        {
+            set => AddToExcludedElements(value);
+        }
 
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
         [Parameter] public RenderFragment<Panzoom>? ChildContent { get; set; }
@@ -141,10 +148,41 @@ namespace BlazorPanzoom
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        private async Task UpdateExcludedElements()
+        {
+            if (_excludedElements is null)
+            {
+                return;
+            }
+
+            if (_excludedElements.Count == 0)
+            {
+                return;
+            }
+
+            // 1. Get the current excluded elements from JS
+            // 2. Get the new excluded elements set by the user
+            // 3. Combine the current and new excluded elements
+            // 4. Send the combined array to JS
+            var currentOptions = await GetOptionsAsync();
+            var excludedElements = currentOptions.GetExcludeOrDefault();
+            var newExcludedElements = new ElementReference[excludedElements.Length + _excludedElements.Count];
+            excludedElements.CopyTo(newExcludedElements, 0);
+            _excludedElements.CopyTo(newExcludedElements, excludedElements.Length);
+            await SetOptionsAsync(new PanzoomOptions {Exclude = newExcludedElements});
+            // TODO is this the best way?
+        }
+
+        private void AddToExcludedElements(ElementReference reference)
+        {
+            _excludedElements ??= new HashSet<ElementReference>();
+            _excludedElements.Add(reference);
+        }
+
         private async Task InitializeJsPanzoom()
         {
             // TODO a JS panzoom object MUST be created and shouldn't be null!
-            var hasElementReference = !ElementReference.Equals(default(ElementReference));
+            var hasElementReference = !ElementReference.IsDefault();
             if (hasElementReference)
             {
                 _jsPanzoomReference = await JsRuntime.CreatePanzoomAsync(ElementReference, PanzoomOptions);
@@ -161,6 +199,8 @@ namespace BlazorPanzoom
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
+                await UpdateExcludedElements();
             }
         }
 

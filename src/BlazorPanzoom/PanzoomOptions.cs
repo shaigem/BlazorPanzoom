@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 using BlazorPanzoom.Converters;
 using Microsoft.AspNetCore.Components;
 
@@ -65,15 +66,6 @@ namespace BlazorPanzoom
         [JsonPropertyName("none")] None
     }
 
-    public enum TransitionTimingFunction
-    {
-        Ease,
-        Linear,
-        EaseIn,
-        EaseOut,
-        EaseInOut
-    }
-
     public interface IZoomOnlyOptions
     {
         public bool GetDisableZoomOrDefault(bool disableZoom = default);
@@ -99,10 +91,12 @@ namespace BlazorPanzoom
         protected internal const double DefaultMaxScale = 4;
         protected internal const double DefaultStepScale = 0.3;
 
+        private static readonly ElementReference[] EmptyExcludedReferences = Array.Empty<ElementReference>();
+
         private static readonly PanzoomOptions Default = new();
-        public static ref readonly PanzoomOptions DefaultOptions => ref Default;
 
         private readonly Contain? _contain;
+        public static ref readonly PanzoomOptions DefaultOptions => ref Default;
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -216,26 +210,6 @@ namespace BlazorPanzoom
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Relative { private get; init; }
 
-        public bool GetDisableZoomOrDefault(bool disableZoom = false)
-        {
-            return DisableZoom ?? disableZoom;
-        }
-
-        public double GetMinScaleOrDefault(double minScale = DefaultMinScale)
-        {
-            return MinScale ?? minScale;
-        }
-
-        public double GetMaxScaleOrDefault(double maxScale = DefaultMaxScale)
-        {
-            return MaxScale ?? maxScale;
-        }
-
-        public double GetStepOrDefault(double step = DefaultStepScale)
-        {
-            return Step ?? step;
-        }
-
         public Contain GetContainOrDefault(Contain contain = BlazorPanzoom.Contain.None)
         {
             return Contain ?? contain;
@@ -269,6 +243,36 @@ namespace BlazorPanzoom
         public bool GetRelativeOrDefault(bool relative = default)
         {
             return Relative ?? relative;
+        }
+
+        public bool GetDisableZoomOrDefault(bool disableZoom = false)
+        {
+            return DisableZoom ?? disableZoom;
+        }
+
+        public double GetMinScaleOrDefault(double minScale = DefaultMinScale)
+        {
+            return MinScale ?? minScale;
+        }
+
+        public double GetMaxScaleOrDefault(double maxScale = DefaultMaxScale)
+        {
+            return MaxScale ?? maxScale;
+        }
+
+        public double GetStepOrDefault(double step = DefaultStepScale)
+        {
+            return Step ?? step;
+        }
+
+        public ElementReference[] GetExcludeOrDefault(ElementReference[]? elementReferences)
+        {
+            return Exclude ?? elementReferences ?? EmptyExcludedReferences;
+        }
+
+        public ElementReference[] GetExcludeOrDefault()
+        {
+            return Exclude ?? EmptyExcludedReferences;
         }
     }
 }
