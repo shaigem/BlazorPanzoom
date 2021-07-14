@@ -14,14 +14,14 @@ s [demo page](https://timmywil.com/panzoom/demo/).
 
 The list below shows which examples have been implemented.
 
-#### Demo Example List (5/10):
+#### Demo Example List (6/10):
 
 - [x] [Panning and zooming](https://shaigem.github.io/BlazorPanzoom/)
 - [x] [Panning and focal-point zooming (shift + mousewheel)]
 - [ ] SVG support: move all the things!
 - [x] [Containment within the parent: contain = inside](https://shaigem.github.io/BlazorPanzoom/inside)
 - [x] [Containment within the parent: contain = outside](https://shaigem.github.io/BlazorPanzoom/outside)
-- [ ] Exclude elements within the Panzoom element from event handling
+- [x] [Exclude elements within the Panzoom element from event handling](https://shaigem.github.io/BlazorPanzoom/exclude)
 - [x] [Disabling one axis](https://shaigem.github.io/BlazorPanzoom/oneaxis)
 - [ ] Adding on matrix functions to the transform
 - [ ] Adding a transform to a child
@@ -130,6 +130,10 @@ _panzoom.SetOptionsAsync(new () {DisablePan = true});
 Please see issue [#3](https://github.com/shaigem/BlazorPanzoom/issues/3#issue-941365085) for the list of available options.
 
 View panzoom's [README #doc] for the list of all options and their usage.
+* * *
+### Warning about `ElementReference`
+
+...
 
 ## Contributing
 
