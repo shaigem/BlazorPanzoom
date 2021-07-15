@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace BlazorPanzoom
 {
-    public class BlazorPanzoomCtrl : ComponentBase, IAsyncDisposable
+    public class BlazorPanzoomCtrl : ComponentBase, IPanzoom, IAsyncDisposable
     {
         private DefaultPanzoom? _underlyingPanzoom;
 
@@ -43,6 +43,57 @@ namespace BlazorPanzoom
             {
                 await _underlyingPanzoom.DisposeAsync();
             }
+        }
+
+        public ValueTask ZoomInAsync()
+        {
+            return _underlyingPanzoom.ZoomInAsync();
+        }
+
+        public ValueTask ZoomOutAsync()
+        {
+            return _underlyingPanzoom.ZoomOutAsync();
+        }
+
+        public ValueTask ZoomAsync(double toScale)
+        {
+            return _underlyingPanzoom.ZoomAsync(toScale);
+        }
+
+        public ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
+            IZoomOnlyOptions? overridenZoomOptions)
+        {
+            return _underlyingPanzoom.ZoomToPointAsync(toScale, clientX, clientY, overridenZoomOptions);
+        }
+
+        public ValueTask ResetAsync(PanzoomOptions resetOptions)
+        {
+            return _underlyingPanzoom.ResetAsync(resetOptions);
+        }
+
+        public ValueTask ResetAsync()
+        {
+            return _underlyingPanzoom.ResetAsync();
+        }
+
+        public ValueTask SetOptionsAsync(PanzoomOptions options)
+        {
+            return _underlyingPanzoom.SetOptionsAsync(options);
+        }
+
+        public ValueTask<PanzoomOptions> GetOptionsAsync()
+        {
+            return _underlyingPanzoom.GetOptionsAsync();
+        }
+
+        public ValueTask<double> GetScaleAsync()
+        {
+            return _underlyingPanzoom.GetScaleAsync();
+        }
+
+        public ValueTask DestroyAsync()
+        {
+            return _underlyingPanzoom.DestroyAsync();
         }
     }
 }

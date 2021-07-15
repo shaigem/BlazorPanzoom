@@ -49,25 +49,25 @@ namespace BlazorPanzoom
             await _jsPanzoomReference.InvokeVoidAsync("zoomIn");
         }
 
-        public ValueTask ZoomOutAsync()
+        public async ValueTask ZoomOutAsync()
         {
-            throw new NotImplementedException();
+            await _jsPanzoomReference.InvokeVoidAsync("zoomOut");
         }
 
-        public ValueTask ZoomAsync(double toScale)
+        public async ValueTask ZoomAsync(double toScale)
         {
-            throw new NotImplementedException();
+            await _jsPanzoomReference.InvokeVoidAsync("zoom", toScale);
         }
 
-        public ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
+        public async ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
             IZoomOnlyOptions? overridenZoomOptions)
         {
-            throw new NotImplementedException();
+            await _jsPanzoomReference.InvokeVoidAsync("zoomToPoint", toScale, clientX, clientY, overridenZoomOptions);
         }
 
-        public ValueTask ResetAsync(PanzoomOptions resetOptions)
+        public async ValueTask ResetAsync(PanzoomOptions resetOptions)
         {
-            throw new NotImplementedException();
+            await _jsPanzoomReference.InvokeVoidAsync("reset");
         }
 
         public async ValueTask ResetAsync()
@@ -75,24 +75,24 @@ namespace BlazorPanzoom
             await _jsPanzoomReference.InvokeVoidAsync("reset");
         }
 
-        public ValueTask SetOptionsAsync(PanzoomOptions options)
+        public async ValueTask SetOptionsAsync(PanzoomOptions options)
         {
-            throw new NotImplementedException();
+            await _jsPanzoomReference.InvokeVoidAsync("setOptions", options);
         }
 
-        public ValueTask<PanzoomOptions> GetOptionsAsync()
+        public async ValueTask<PanzoomOptions> GetOptionsAsync()
         {
-            throw new NotImplementedException();
+            return await _jsPanzoomReference.InvokeAsync<PanzoomOptions>("getOptions");
         }
 
-        public ValueTask<double> GetScaleAsync()
+        public async ValueTask<double> GetScaleAsync()
         {
-            throw new NotImplementedException();
+            return await _jsPanzoomReference.InvokeAsync<double>("getScale");
         }
 
-        public ValueTask DestroyAsync()
+        public async ValueTask DestroyAsync()
         {
-            throw new NotImplementedException();
+            await _jsPanzoomReference.InvokeVoidAsync("destroy");
         }
 
         [JSInvokable]
@@ -111,8 +111,8 @@ namespace BlazorPanzoom
 
         public async ValueTask DisposeAsync()
         {
-            // TODO destroy
             await RemoveWheelListener();
+            await DestroyAsync();
         }
     }
 
