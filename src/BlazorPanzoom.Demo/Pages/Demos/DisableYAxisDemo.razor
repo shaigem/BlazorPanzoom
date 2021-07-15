@@ -2,10 +2,10 @@
 
 <Demo Title="Disabling one axis">
     <div class="panzoom-parent">
-        <Panzoom PanzoomOptions="@(new PanzoomOptions {DisableYAxis = true})">
+        <BlazorPanzoomCtrl PanzoomOptions="@(new PanzoomOptions {DisableYAxis = true})">
             <div style="width: 400px; margin: 0 auto" @ref="@context.ElementReference" class="panzoom">
                 <img style="width: 100%; height: 100%" src="awesome_tiger.svg" alt="image"/>
             </div>
-        </Panzoom>
+        </BlazorPanzoomCtrl>
     </div>
 </Demo>
