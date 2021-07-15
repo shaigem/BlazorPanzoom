@@ -1,7 +1,6 @@
 ﻿class BlazorPanzoomInterop {
 
     constructor() {
-        this.boundWheelListener = null;
     }
 
     createPanzoomForReference(element, options) {
@@ -19,8 +18,8 @@
         element.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
     }
 
-    registerWheelListener(dotnetReference, element) {
-        element.parentElement.addEventListener('wheel', this.boundWheelListener = this.wheelHandler.bind(this, dotnetReference))
+    registerWheelListener(dotnetReference, element, panzoom) {
+        element.parentElement.addEventListener('wheel', panzoom.boundWheelListener = this.wheelHandler.bind(this, dotnetReference))
     }
 
     wheelHandler(dotnetReference, event) {
@@ -34,13 +33,10 @@
         })
     }
 
-    removeZoomWithWheelListener(element, panzoom) {
+    removeWheelListeners(element, panzoom) {
         element.parentElement.removeEventListener('wheel', panzoom.zoomWithWheel);
-    }
-
-    removeWheelListener(element) {
-        if (this.boundWheelListener) {
-            element.parentElement.removeEventListener('wheel', this.boundWheelListener);
+        if (panzoom.boundWheelListener) {
+            element.parentElement.removeEventListener('wheel', panzoom.boundWheelListener);
         }
     }
 }

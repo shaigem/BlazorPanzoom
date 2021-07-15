@@ -39,18 +39,9 @@ namespace BlazorPanzoom
 
         public async ValueTask DisposeAsync()
         {
-            if (WheelHandler.Equals(WheelHandler.Custom))
-            {
-                await JsRuntime.RemoveWheelListenerAsync(ElementReference);
-            }
-
             if (_jsPanzoomReference is not null)
             {
-                if (WheelHandler.Equals(WheelHandler.ZoomOnScroll))
-                {
-                    await JsRuntime.RemoveZoomWithWheelListenerAsync(ElementReference, _jsPanzoomReference);
-                }
-
+                await JsRuntime.RemoveZoomWithWheelListenerAsync(ElementReference, _jsPanzoomReference);
                 await DestroyAsync();
                 await _jsPanzoomReference.DisposeAsync();
                 _jsPanzoomReference = null;
@@ -219,7 +210,7 @@ namespace BlazorPanzoom
         private async ValueTask RegisterCustomWheelListener()
         {
             _dotNetObjectReference ??= DotNetObjectReference.Create(this);
-            await JsRuntime.RegisterWheelListenerAsync(_dotNetObjectReference, ElementReference);
+            await JsRuntime.RegisterWheelListenerAsync(_dotNetObjectReference, ElementReference, _jsPanzoomReference!);
         }
 
         private async ValueTask JsPanzoomInvokeVoidAsync(string identifier, params object?[] args)
