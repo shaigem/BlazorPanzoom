@@ -8,10 +8,14 @@
     }
 
     createPanzoomForSelector(selector, options) {
-        const elements = document.querySelectorAll(selector)
-        const array = []
-        elements.forEach((element) => array.push(Panzoom(element, options)))
-        return array
+        try {
+            const elements = document.querySelectorAll(selector)
+            const array = []
+            elements.forEach((element) => array.push(DotNet.createJSObjectReference(Panzoom(element, options))))
+            return array
+        } catch {
+            throw new Error(`Cannot create a Panzoom object from selectors!`);
+        }
     }
 
     registerDefaultWheelZoom(element, panzoom) {
@@ -19,6 +23,7 @@
     }
 
     registerWheelListener(dotnetReference, element, panzoom) {
+        panzoom.dotNetWheelListenerReference = dotnetReference
         element.parentElement.addEventListener('wheel', panzoom.boundWheelListener = this.wheelHandler.bind(this, dotnetReference))
     }
 
@@ -37,6 +42,7 @@
         element.parentElement.removeEventListener('wheel', panzoom.zoomWithWheel);
         if (panzoom.boundWheelListener) {
             element.parentElement.removeEventListener('wheel', panzoom.boundWheelListener);
+            panzoom.dotNetWheelListenerReference.dispose()
         }
     }
 }
