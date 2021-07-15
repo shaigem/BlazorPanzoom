@@ -113,6 +113,7 @@ namespace BlazorPanzoom
         {
             await RemoveWheelListener();
             await DestroyAsync();
+            await _jsPanzoomReference.DisposeAsync();
         }
     }
 
