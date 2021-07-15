@@ -20,6 +20,8 @@ namespace BlazorPanzoom
         }
 
         [Parameter] public PanzoomOptions PanzoomOptions { private get; set; } = PanzoomOptions.DefaultOptions;
+        [Parameter] public WheelHandler WheelHandler { private get; set; } = WheelHandler.None;
+        [Parameter] public EventCallback<PanzoomWheelEventArgs> OnWheel { private get; set; }
         [Parameter] public RenderFragment<BlazorPanzoomCtrl>? ChildContent { get; set; }
 
         public async ValueTask DisposeAsync()
@@ -27,56 +29,79 @@ namespace BlazorPanzoom
             await _underlyingPanzoom.DisposeAsync();
         }
 
-        public ValueTask ZoomInAsync()
+        public async ValueTask ZoomInAsync()
         {
-            return _underlyingPanzoom.ZoomInAsync();
+            await _underlyingPanzoom.ZoomInAsync();
         }
 
-        public ValueTask ZoomOutAsync()
+        public async ValueTask ZoomOutAsync()
         {
-            return _underlyingPanzoom.ZoomOutAsync();
+            await _underlyingPanzoom.ZoomOutAsync();
         }
 
-        public ValueTask ZoomAsync(double toScale)
+        public async ValueTask ZoomAsync(double toScale)
         {
-            return _underlyingPanzoom.ZoomAsync(toScale);
+            await _underlyingPanzoom.ZoomAsync(toScale);
         }
 
-        public ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
+        public async ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
             IZoomOnlyOptions? overridenZoomOptions)
         {
-            return _underlyingPanzoom.ZoomToPointAsync(toScale, clientX, clientY, overridenZoomOptions);
+            await _underlyingPanzoom.ZoomToPointAsync(toScale, clientX, clientY, overridenZoomOptions);
         }
 
-        public ValueTask ResetAsync(PanzoomOptions resetOptions)
+        public async ValueTask ResetAsync(PanzoomOptions resetOptions)
         {
-            return _underlyingPanzoom.ResetAsync(resetOptions);
+            await _underlyingPanzoom.ResetAsync(resetOptions);
         }
 
-        public ValueTask ResetAsync()
+        public async ValueTask ResetAsync()
         {
-            return _underlyingPanzoom.ResetAsync();
+            await _underlyingPanzoom.ResetAsync();
         }
 
-        public ValueTask SetOptionsAsync(PanzoomOptions options)
+        public async ValueTask SetOptionsAsync(PanzoomOptions options)
         {
-            return _underlyingPanzoom.SetOptionsAsync(options);
+            await _underlyingPanzoom.SetOptionsAsync(options);
         }
 
-        public ValueTask<PanzoomOptions> GetOptionsAsync()
+        public async ValueTask<PanzoomOptions> GetOptionsAsync()
         {
-            return _underlyingPanzoom.GetOptionsAsync();
+            return await _underlyingPanzoom.GetOptionsAsync();
         }
 
-        public ValueTask<double> GetScaleAsync()
+        public async ValueTask<double> GetScaleAsync()
         {
-            return _underlyingPanzoom.GetScaleAsync();
+            return await _underlyingPanzoom.GetScaleAsync();
         }
 
-        public ValueTask DestroyAsync()
+        public async ValueTask DestroyAsync()
         {
-            return _underlyingPanzoom.DestroyAsync();
+            await _underlyingPanzoom.DestroyAsync();
         }
+
+        public async ValueTask ZoomWithWheel(PanzoomWheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
+        {
+            var currentOptions = await GetOptionsAsync();
+            var currentScale = await GetScaleAsync();
+            var minScale = currentOptions.GetMinScaleOrDefault();
+            var maxScale = currentOptions.GetMaxScaleOrDefault();
+            var step = currentOptions.GetStepOrDefault();
+            if (overridenOptions is not null)
+            {
+                minScale = overridenOptions.GetMinScaleOrDefault(minScale);
+                maxScale = overridenOptions.GetMaxScaleOrDefault(maxScale);
+                step = overridenOptions.GetStepOrDefault(step);
+            }
+
+            var delta = args.DeltaY == 0 && args.DeltaX != 0 ? args.DeltaX : args.DeltaY;
+            var direction = delta < 0 ? 1 : -1;
+            var calculatedScale = currentScale * Math.Exp(direction * step / 3);
+            var constrainedScale = Math.Min(Math.Max(calculatedScale, minScale), maxScale);
+            Console.WriteLine(constrainedScale);
+            await ZoomToPointAsync(constrainedScale, args.ClientX, args.ClientY, overridenOptions);
+        }
+
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
@@ -95,6 +120,11 @@ namespace BlazorPanzoom
             {
                 _underlyingPanzoom =
                     (DefaultPanzoom) await PanzoomProvider.CreateForElementReference(ElementReference, PanzoomOptions);
+                if (!WheelHandler.Equals(WheelHandler.None))
+                {
+                    await PanzoomProvider.RegisterZooming(ElementReference, _underlyingPanzoom, WheelHandler, OnWheel);
+                }
+
                 await UpdateExcludedElements();
             }
 
