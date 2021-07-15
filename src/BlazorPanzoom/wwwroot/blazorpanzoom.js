@@ -8,6 +8,13 @@
         return Panzoom(element, options)
     }
 
+    createPanzoomForSelector(selector, options) {
+        const elements = document.querySelectorAll(selector)
+        const array = []
+        elements.forEach((element) => array.push(Panzoom(element, options)))
+        return array
+    }
+
     registerDefaultWheelZoom(element, panzoom) {
         element.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
     }
@@ -27,13 +34,15 @@
         })
     }
 
-    dispose(element, panzoom) {
+    removeZoomWithWheelListener(element, panzoom) {
         element.parentElement.removeEventListener('wheel', panzoom.zoomWithWheel);
+    }
+
+    removeWheelListener(element) {
         if (this.boundWheelListener) {
             element.parentElement.removeEventListener('wheel', this.boundWheelListener);
         }
     }
-
 }
 
 window.blazorPanzoom = new BlazorPanzoomInterop()

@@ -39,12 +39,24 @@ namespace BlazorPanzoom
 
         public async ValueTask DisposeAsync()
         {
+            if (WheelHandler.Equals(WheelHandler.Custom))
+            {
+                await JsRuntime.RemoveWheelListenerAsync(ElementReference);
+            }
+
             if (_jsPanzoomReference is not null)
             {
-                await JsRuntime.DisposePanzoomAsync(ElementReference, _jsPanzoomReference);
+                if (WheelHandler.Equals(WheelHandler.ZoomOnScroll))
+                {
+                    await JsRuntime.RemoveZoomWithWheelListenerAsync(ElementReference, _jsPanzoomReference);
+                }
+
                 await DestroyAsync();
                 await _jsPanzoomReference.DisposeAsync();
+                _jsPanzoomReference = null;
             }
+
+            _dotNetObjectReference?.Dispose();
         }
 
         public async ValueTask ZoomInAsync()

@@ -29,10 +29,17 @@ namespace BlazorPanzoom
             await jsRuntime.InvokeVoid("registerWheelListener", dotNetObjectReference, elementReference);
         }
 
-        public static async ValueTask DisposePanzoomAsync(this IJSRuntime jsRuntime, ElementReference elementReference,
+        public static async ValueTask RemoveZoomWithWheelListenerAsync(this IJSRuntime jsRuntime,
+            ElementReference elementReference,
             IJSObjectReference jsPanzoomReference)
         {
-            await jsRuntime.InvokeVoid("dispose", elementReference, jsPanzoomReference);
+            await jsRuntime.InvokeVoid("removeZoomWithWheelListener", elementReference, jsPanzoomReference);
+        }
+
+        public static async ValueTask RemoveWheelListenerAsync(this IJSRuntime jsRuntime,
+            ElementReference elementReference)
+        {
+            await jsRuntime.InvokeVoid("removeWheelListener", elementReference);
         }
 
         private static async ValueTask
