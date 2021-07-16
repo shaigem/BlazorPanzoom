@@ -27,10 +27,41 @@ namespace BlazorPanzoom
             return await Invoke<IJSObjectReference[]>("createPanzoomForSelector", selector, options);
         }
 
-        public async ValueTask PerformForAll(string functionName, IEnumerable<IPanzoom> panzoomEnumerable,
-            params object[] args)
+        public async ValueTask RegisterZoomWithWheelAsync(IJSObjectReference jsPanzoomReference,
+            ElementReference? elementReference = null)
         {
-            await InvokeVoid("performForAllPanzoom", functionName, panzoomEnumerable, args);
+            await InvokeVoid("registerZoomWithWheel", jsPanzoomReference, elementReference);
+        }
+
+        public async ValueTask RegisterWheelListenerAsync(
+            DotNetObjectReference<IPanzoomWheelListener> dotNetObjectReference, IJSObjectReference jsPanzoomReference,
+            ElementReference? elementReference = null)
+        {
+            await InvokeVoid("registerWheelListener", dotNetObjectReference, jsPanzoomReference, elementReference);
+        }
+
+        public async ValueTask RemoveZoomWithWheelAsync(IJSObjectReference jsPanzoomReference,
+            ElementReference? elementReference = null)
+        {
+            await InvokeVoid("removeZoomWithWheel", jsPanzoomReference, elementReference);
+        }
+
+        public async ValueTask RemoveWheelListenerAsync(IJSObjectReference jsPanzoomReference,
+            ElementReference? elementReference = null)
+        {
+            await InvokeVoid("removeWheelListener", jsPanzoomReference, elementReference);
+        }
+
+        public async ValueTask DestroyPanzoomAsync(IJSObjectReference jsPanzoomReference)
+        {
+            await InvokeVoid("destroyPanzoom", jsPanzoomReference);
+        }
+
+        public async ValueTask PerformForAll(string functionName, IEnumerable<IJSObjectReference> jsPanzoomReferences,
+            params object[] args)
+
+        {
+            await InvokeVoid("performForAllPanzoom", functionName, jsPanzoomReferences, args);
         }
 
         private async ValueTask

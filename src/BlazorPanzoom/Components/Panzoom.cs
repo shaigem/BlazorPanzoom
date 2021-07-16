@@ -20,6 +20,9 @@ namespace BlazorPanzoom
             set => AddToExcludedElements(value);
         }
 
+        [Parameter] public bool UseParentForWheelEvents { get; set; } = true;
+        [Parameter] public WheelMode WheelMode { get; set; } = WheelMode.None;
+        [Parameter] public EventCallback<WheelEventArgs> OnWheel { get; set; }
         [Parameter] public PanzoomOptions PanzoomOptions { private get; set; } = PanzoomOptions.DefaultOptions;
         [Parameter] public RenderFragment<Panzoom>? ChildContent { get; set; }
 
@@ -45,7 +48,7 @@ namespace BlazorPanzoom
         }
 
         public async ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
-            IZoomOnlyOptions? overridenZoomOptions)
+            IZoomOnlyOptions? overridenZoomOptions = default)
         {
             await _underlyingPanzoomInterop.ZoomToPointAsync(toScale, clientX, clientY, overridenZoomOptions);
         }
@@ -100,8 +103,28 @@ namespace BlazorPanzoom
         {
             if (firstRender)
             {
+                if (ElementReference.IsDefault())
+                {
+                    throw new ArgumentException("ElementReference must be set for Panzoom to work");
+                }
+
                 _underlyingPanzoomInterop =
                     (PanzoomInterop) await PanzoomHelper.CreateForElementReference(ElementReference, PanzoomOptions);
+
+                if (WheelMode.Equals(WheelMode.Custom))
+                {
+                    if (!OnWheel.HasDelegate)
+                    {
+                        throw new ArgumentException("OnWheel must be set when using WheelMode.Custom!");
+                    }
+
+                    await PanzoomHelper.RegisterWheelListener(_underlyingPanzoomInterop, OnWheel, ElementReference);
+                }
+                else if (WheelMode.Equals(WheelMode.ZoomWithWheel))
+                {
+                    await PanzoomHelper.RegisterZoomWithWheel(_underlyingPanzoomInterop, ElementReference);
+                }
+
                 await UpdateExcludedElements();
             }
 

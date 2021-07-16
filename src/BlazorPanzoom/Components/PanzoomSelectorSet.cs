@@ -9,9 +9,10 @@ namespace BlazorPanzoom
     {
         private readonly PanzoomSet _panzoomSet = new();
         [Inject] private IPanzoomHelper PanzoomHelper { get; set; } = null!;
-        public IEnumerable<IPanzoom> PanzoomSet => _panzoomSet;
+        public IEnumerable<PanzoomInterop> PanzoomSet => _panzoomSet;
         [Parameter] public string Selector { private get; set; } = "";
         [Parameter] public PanzoomOptions PanzoomOptions { private get; set; } = PanzoomOptions.DefaultOptions;
+        [Parameter] public EventCallback OnAfterCreate { get; set; }
 
         public async ValueTask DisposeAsync()
         {
@@ -27,7 +28,12 @@ namespace BlazorPanzoom
 
                 foreach (var panzoom in list)
                 {
-                    _panzoomSet.Add((PanzoomInterop) panzoom);
+                    _panzoomSet.Add(panzoom);
+                }
+
+                if (OnAfterCreate.HasDelegate)
+                {
+                    await OnAfterCreate.InvokeAsync();
                 }
             }
 
