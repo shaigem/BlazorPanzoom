@@ -104,6 +104,11 @@ namespace BlazorPanzoom
             return await _jsPanzoomReference.InvokeAsync<double>("getScale");
         }
 
+        public async ValueTask SetStyleAsync(string name, string value)
+        {
+            await _jsPanzoomReference.InvokeVoidAsync("setStyle", name, value);
+        }
+
         public async ValueTask DestroyAsync()
         {
             await _jsPanzoomReference.InvokeVoidAsync("destroy");

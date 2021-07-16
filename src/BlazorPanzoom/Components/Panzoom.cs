@@ -78,6 +78,11 @@ namespace BlazorPanzoom
             return await _underlyingPanzoomInterop.GetScaleAsync();
         }
 
+        public async ValueTask SetStyleAsync(string name, string value)
+        {
+            await _underlyingPanzoomInterop.SetStyleAsync(name, value);
+        }
+
         public async ValueTask DestroyAsync()
         {
             await _underlyingPanzoomInterop.DestroyAsync();
