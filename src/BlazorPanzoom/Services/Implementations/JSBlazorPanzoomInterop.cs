@@ -27,26 +27,6 @@ namespace BlazorPanzoom
             return await Invoke<IJSObjectReference[]>("createPanzoomForSelector", selector, options);
         }
 
-        public async ValueTask RegisterDefaultWheelZoom(ElementReference elementReference,
-            IJSObjectReference jsPanzoomReference)
-        {
-            await InvokeVoid("registerDefaultWheelZoom", elementReference, jsPanzoomReference);
-        }
-
-        public async ValueTask RegisterWheelListenerAsync(
-            DotNetObjectReference<IPanzoomWheelListener> dotNetObjectReference, ElementReference elementReference,
-            IJSObjectReference jsPanzoomReference)
-        {
-            await InvokeVoid("registerWheelListener", dotNetObjectReference, elementReference, jsPanzoomReference);
-        }
-
-        public async ValueTask RemoveZoomWithWheelListenerAsync(
-            ElementReference elementReference,
-            IJSObjectReference jsPanzoomReference)
-        {
-            await InvokeVoid("removeWheelListeners", elementReference, jsPanzoomReference);
-        }
-
         public async ValueTask PerformForAll(string functionName, IEnumerable<IPanzoom> panzoomEnumerable,
             params object[] args)
         {

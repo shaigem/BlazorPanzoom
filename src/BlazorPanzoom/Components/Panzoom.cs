@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorPanzoom
 {
@@ -20,8 +21,6 @@ namespace BlazorPanzoom
         }
 
         [Parameter] public PanzoomOptions PanzoomOptions { private get; set; } = PanzoomOptions.DefaultOptions;
-        [Parameter] public WheelHandler WheelHandler { private get; set; } = WheelHandler.None;
-        [Parameter] public EventCallback<PanzoomWheelEventArgs> OnWheel { private get; set; }
         [Parameter] public RenderFragment<Panzoom>? ChildContent { get; set; }
 
         public async ValueTask DisposeAsync()
@@ -81,7 +80,7 @@ namespace BlazorPanzoom
             await _underlyingPanzoomInterop.DestroyAsync();
         }
 
-        public async ValueTask ZoomWithWheel(PanzoomWheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
+        public async ValueTask ZoomWithWheel(WheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
         {
             await _underlyingPanzoomInterop.ZoomWithWheel(args, overridenOptions);
         }
@@ -103,12 +102,6 @@ namespace BlazorPanzoom
             {
                 _underlyingPanzoomInterop =
                     (PanzoomInterop) await PanzoomHelper.CreateForElementReference(ElementReference, PanzoomOptions);
-                if (!WheelHandler.Equals(WheelHandler.None))
-                {
-                    await PanzoomHelper.RegisterZooming(ElementReference, _underlyingPanzoomInterop, WheelHandler,
-                        OnWheel);
-                }
-
                 await UpdateExcludedElements();
             }
 

@@ -11,7 +11,10 @@
         try {
             const elements = document.querySelectorAll(selector)
             const array = []
-            elements.forEach((element) => array.push(DotNet.createJSObjectReference(Panzoom(element, options))))
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i]
+                array.push(DotNet.createJSObjectReference(Panzoom(element, options)))
+            }
             return array
         } catch {
             throw new Error(`Cannot create a Panzoom object from selectors!`);
@@ -54,6 +57,7 @@
         if (panzoom.boundWheelListener) {
             element.parentElement.removeEventListener('wheel', panzoom.boundWheelListener);
             panzoom.dotNetWheelListenerReference.dispose()
+            delete panzoom.dotNetWheelListenerReference
         }
     }
 }

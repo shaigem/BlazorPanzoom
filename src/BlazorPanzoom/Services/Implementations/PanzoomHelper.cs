@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace BlazorPanzoom
 {
@@ -13,32 +11,6 @@ namespace BlazorPanzoom
         public PanzoomHelper(IJSBlazorPanzoomInterop jsPanzoomInterop)
         {
             _jsPanzoomInterop = jsPanzoomInterop;
-        }
-
-        public async ValueTask RegisterZooming(ElementReference elementReference,
-            PanzoomInterop panzoomInterop, WheelHandler wheelHandler,
-            EventCallback<PanzoomWheelEventArgs> handler)
-        {
-            switch (wheelHandler)
-            {
-                case WheelHandler.Custom when handler.HasDelegate:
-                    var dotNetListenerReference = DotNetObjectReference.Create<IPanzoomWheelListener>(panzoomInterop);
-                    panzoomInterop.OnWheel = handler;
-                    await _jsPanzoomInterop.RegisterWheelListenerAsync(dotNetListenerReference, elementReference,
-                        panzoomInterop.JSPanzoomReference);
-                    break;
-                case WheelHandler.ZoomOnScroll:
-                    await _jsPanzoomInterop.RegisterDefaultWheelZoom(elementReference,
-                        panzoomInterop.JSPanzoomReference);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(wheelHandler));
-            }
-
-            ValueTask RemoveListener() =>
-                _jsPanzoomInterop.RemoveZoomWithWheelListenerAsync(elementReference, panzoomInterop.JSPanzoomReference);
-
-            panzoomInterop.RemoveListenersTask = RemoveListener;
         }
 
         public async ValueTask<IPanzoom> CreateForElementReference(ElementReference elementReference,

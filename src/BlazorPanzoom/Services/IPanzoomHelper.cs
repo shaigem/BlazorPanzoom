@@ -6,10 +6,6 @@ namespace BlazorPanzoom
 {
     public interface IPanzoomHelper
     {
-        public ValueTask RegisterZooming(ElementReference elementReference,
-            PanzoomInterop panzoomInterop, WheelHandler wheelHandler,
-            EventCallback<PanzoomWheelEventArgs> handler);
-
         public ValueTask<IPanzoom> CreateForElementReference(ElementReference elementReference,
             PanzoomOptions? panzoomOptions = default);
 

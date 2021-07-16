@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace BlazorPanzoom
 {
-    public class PanzoomInterop : IPanzoom, IPanzoomWheelListener, IAsyncDisposable
+    public class PanzoomInterop : IPanzoom, IAsyncDisposable
     {
         private readonly IJSObjectReference _jsPanzoomReference;
 
@@ -16,14 +16,9 @@ namespace BlazorPanzoom
 
         public IJSObjectReference JSPanzoomReference => _jsPanzoomReference;
 
-        public Func<ValueTask>? RemoveListenersTask { get; set; }
-
-        public EventCallback<PanzoomWheelEventArgs> OnWheel { get; set; } // TODO could probably just use Func
-
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
-            await RemoveWheelListener();
             await DestroyAsync();
             await _jsPanzoomReference.DisposeAsync();
         }
@@ -50,7 +45,7 @@ namespace BlazorPanzoom
                 overridenZoomOptions);
         }
 
-        public async ValueTask ZoomWithWheel(PanzoomWheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
+        public async ValueTask ZoomWithWheel(WheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
         {
             var currentOptions = await GetOptionsAsync();
             var currentScale = await GetScaleAsync();
@@ -99,20 +94,6 @@ namespace BlazorPanzoom
         public async ValueTask DestroyAsync()
         {
             await _jsPanzoomReference.InvokeVoidAsync("destroy");
-        }
-
-        [JSInvokable]
-        public async ValueTask OnCustomWheelEvent(PanzoomWheelEventArgs args)
-        {
-            await OnWheel.InvokeAsync(args);
-        }
-
-        public async ValueTask RemoveWheelListener()
-        {
-            if (RemoveListenersTask is not null)
-            {
-                await RemoveListenersTask.Invoke();
-            }
         }
     }
 }

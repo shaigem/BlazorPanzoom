@@ -5,8 +5,8 @@
         <button @onclick="OnResetClick">Reset</button>
     </div>
 
-    <div class="panzoom-parent" style="border-width: 10px;">
-        <Panzoom @ref="_panzoom" PanzoomOptions="@(new PanzoomOptions {Canvas = true})" WheelHandler="@WheelHandler.Custom" OnWheel="@OnWheel">
+    <div class="panzoom-parent" style="border-width: 10px;" @onwheel="OnWheel">
+        <Panzoom @ref="_panzoom" PanzoomOptions="@(new PanzoomOptions {Canvas = true})">
             <div @ref="@context.ElementReference" class="panzoom" style="width: 400px; height: 400px; margin: 0 auto;">
                 <img style="width: 100%; height: 100%;" src="target.png" alt="image"/>
             </div>
@@ -20,9 +20,8 @@
 
     private async Task OnResetClick(MouseEventArgs args) => await _panzoom.ResetAsync();
 
-    private async Task OnWheel(PanzoomWheelEventArgs args)
+    private async Task OnWheel(WheelEventArgs args)
     {
-    // zoom only when holding shift key
         if (!args.ShiftKey)
         {
             return;

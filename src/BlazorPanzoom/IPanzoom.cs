@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorPanzoom
 {
@@ -11,7 +12,7 @@ namespace BlazorPanzoom
         ValueTask ZoomToPointAsync(double toScale, double clientX, double clientY,
             IZoomOnlyOptions? overridenZoomOptions);
 
-        ValueTask ZoomWithWheel(PanzoomWheelEventArgs args, IZoomOnlyOptions? overridenOptions = default);
+        ValueTask ZoomWithWheel(WheelEventArgs args, IZoomOnlyOptions? overridenOptions = default);
         ValueTask ResetAsync(PanzoomOptions resetOptions);
         ValueTask ResetAsync();
         ValueTask SetOptionsAsync(PanzoomOptions options);
