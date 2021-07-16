@@ -24,6 +24,15 @@ namespace BlazorPanzoom
             _jsPanzoomInterop = jsPanzoomInterop;
         }
 
+        public async ValueTask SetTransformAsync(PanzoomInterop panzoom, EventCallback<SetTransformArgs> onSetTransform)
+        {
+            var dotNetRef = DotNetObjectReference.Create<IPanzoom>(panzoom);
+
+            await _jsPanzoomInterop.RegisterSetTransformAsync(dotNetRef, panzoom.JSPanzoomReference);
+
+            panzoom.T = onSetTransform;
+        }
+
         public async ValueTask RegisterZoomWithWheelAsync(PanzoomInterop panzoom,
             ElementReference? elementReference = null)
         {

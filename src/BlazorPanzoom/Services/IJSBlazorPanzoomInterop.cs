@@ -12,6 +12,9 @@ namespace BlazorPanzoom
 
         public ValueTask<IJSObjectReference[]> CreatePanzoomAsync(string selector, PanzoomOptions? options = null);
 
+        public ValueTask RegisterSetTransformAsync(DotNetObjectReference<IPanzoom> dotNetObjectReference,
+            IJSObjectReference jsPanzoomReference);
+
         public ValueTask RegisterZoomWithWheelAsync(
             IJSObjectReference jsPanzoomReference, ElementReference? elementReference = null);
 

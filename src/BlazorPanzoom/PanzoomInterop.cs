@@ -19,6 +19,8 @@ namespace BlazorPanzoom
 
         public IJSObjectReference JSPanzoomReference => _jsPanzoomReference;
 
+        public EventCallback<SetTransformArgs> T { get; set; }
+
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
@@ -34,6 +36,11 @@ namespace BlazorPanzoom
             }
 
             await _jsPanzoomReference.DisposeAsync();
+        }
+
+        public async ValueTask PanAsync(double x, double y, IPanOnlyOptions? overridenOptions = default)
+        {
+            await _jsPanzoomReference.InvokeVoidAsync("pan", x, y, overridenOptions);
         }
 
         public async ValueTask ZoomInAsync()
@@ -104,6 +111,11 @@ namespace BlazorPanzoom
             return await _jsPanzoomReference.InvokeAsync<double>("getScale");
         }
 
+        public async ValueTask<FocalPoint2> GetPanAsync()
+        {
+            return await _jsPanzoomReference.InvokeAsync<FocalPoint2>("getPan");
+        }
+
         public async ValueTask SetStyleAsync(string name, string value)
         {
             await _jsPanzoomReference.InvokeVoidAsync("setStyle", name, value);
@@ -115,12 +127,21 @@ namespace BlazorPanzoom
         }
 
         public EventCallback<WheelEventArgs> OnWheel { get; set; }
+
+
         public Func<ValueTask>? OnRemoveListener { get; set; }
 
         [JSInvokable]
         public async ValueTask OnCustomWheelEvent(WheelEventArgs args)
         {
             await OnWheel.InvokeAsync(args);
+        }
+
+
+        [JSInvokable]
+        public async ValueTask OnSetTransform(SetTransformArgs args)
+        {
+            await T.InvokeAsync(args);
         }
 
         protected bool Equals(PanzoomInterop other)

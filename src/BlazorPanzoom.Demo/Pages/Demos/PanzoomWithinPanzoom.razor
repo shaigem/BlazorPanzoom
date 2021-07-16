@@ -1,0 +1,79 @@
+﻿@page "/inception"
+
+<Demo Title="A Panzoom instance within another Panzoom instance">
+    <div class="buttons">
+        <button @onclick="OnZoomInClick">Zoom in</button>
+        <button @onclick="OnZoomOutClick">Zoom out</button>
+        <button @onclick="OnResetClick">Reset</button>
+    </div>
+
+    <div class="panzoom-parent">
+        <Panzoom Context="pz" @ref="_panzoom">
+            <Panzoom Context="pz2" @ref="_panzoom2" SetTransform="@SetTransformCustom">
+                <div @ref="pz.ElementReference" class="panzoom" style="width: 400px; border: 2px dotted; margin: 0 auto">
+                    <div @ref="pz2.ElementReference" style="width: 200px;
+                                          margin: 0 auto;
+                                          padding: 20px;
+                                          background-color: #33DDDD;
+                                          border: 1px solid #000000;
+                                          color: black;
+                                          text-align: center">
+                        This is a Panzoom element within another Panzoom element. See example code for panning
+                        within a zoomed parent.
+                    </div>
+                    <img style="width: 400px; height: 400px" src="awesome_tiger.svg" alt="image"/>
+                </div>
+            </Panzoom>
+        </Panzoom>
+
+    </div>
+</Demo>
+
+@code {
+
+
+    private Panzoom _panzoom;
+    private Panzoom _panzoom2;
+
+    private async Task SetTransformCustom(SetTransformArgs args)
+    {
+        var parentScale = await _panzoom.GetScaleAsync();
+        await _panzoom2.SetStyleAsync(
+            "transform",
+            $"scale({args.Scale}) translate({args.X / parentScale}px, {args.Y / parentScale}px)");
+    }
+
+    private async Task OnZoomInClick(MouseEventArgs args)
+    {
+        await AdjustScale(true);
+    }
+
+    private async Task OnZoomOutClick(MouseEventArgs args)
+    {
+        await AdjustScale(false);
+    }
+
+    private async Task OnResetClick(MouseEventArgs args)
+    {
+        await _panzoom.ResetAsync();
+        await _panzoom2.ResetAsync();
+    }
+
+    private async Task AdjustScale(bool zoomIn)
+    {
+        var oldScale = await _panzoom.GetScaleAsync();
+
+        if (zoomIn)
+        {
+            await _panzoom.ZoomInAsync();
+        }
+        else
+        {
+            await _panzoom.ZoomOutAsync();
+        }
+        var newScale = await _panzoom.GetScaleAsync();
+        var pan = await _panzoom2.GetPanAsync();
+        await _panzoom2.PanAsync((pan.X / oldScale) * newScale, (pan.Y / oldScale) * newScale, new PanzoomOptions {Animate = true});
+    }
+
+}

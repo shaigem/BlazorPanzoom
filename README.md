@@ -24,7 +24,7 @@ The list below shows which examples have been implemented.
 - [x] [Exclude elements within the Panzoom element from event handling](https://shaigem.github.io/BlazorPanzoom/exclude)
 - [x] [Disabling one axis](https://shaigem.github.io/BlazorPanzoom/oneaxis)
 - [ ] Adding on matrix functions to the transform
-- [ ] Adding a transform to a child
+- [x] [Adding a transform to a child](https://shaigem.github.io/BlazorPanzoom/transform)
 - [ ] A Panzoom instance within another Panzoom instance
 
 ## Installation

@@ -14,6 +14,10 @@ namespace BlazorPanzoom
         public ValueTask<PanzoomInterop[]> CreateForSelectorAsync(string selector,
             PanzoomOptions? panzoomOptions = default);
 
+        public ValueTask SetTransformAsync(PanzoomInterop panzoom,
+            EventCallback<SetTransformArgs> onSetTransform);
+
+
         public ValueTask RegisterZoomWithWheelAsync(
             PanzoomInterop panzoom, ElementReference? elementReference = null);
 
@@ -22,6 +26,7 @@ namespace BlazorPanzoom
 
         public ValueTask RegisterWheelListenerAsync(PanzoomInterop panzoom, object receiver,
             Func<WheelEventArgs, Task> onWheel, ElementReference? elementReference = null);
+
 
         public ValueTask ResetAllForAsync(IEnumerable<PanzoomInterop> panzoomInterops);
     }

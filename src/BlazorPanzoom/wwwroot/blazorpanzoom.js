@@ -34,6 +34,18 @@
         }
     }
 
+    registerSetTransform(dotnetReference, panzoom) {
+        if (!panzoom) {
+            return
+        }
+        const opts = {
+            setTransform: (elem, {x, y, scale, isSVG}) => {
+                dotnetReference.invokeMethodAsync('OnSetTransform', {x, y, scale, isSVG})
+            }
+        }
+        panzoom.setOptions(opts)
+    }
+
     registerZoomWithWheel(panzoom, element) {
         const parent = element ? element.parentElement : panzoom.boundElement.parentElement
         parent.addEventListener('wheel', panzoom.zoomWithWheel)

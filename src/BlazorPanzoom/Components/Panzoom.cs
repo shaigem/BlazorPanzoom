@@ -20,16 +20,23 @@ namespace BlazorPanzoom
             set => AddToExcludedElements(value);
         }
 
-        [Parameter] public bool UseParentForWheelEvents { get; set; } = true;
         [Parameter] public WheelMode WheelMode { get; set; } = WheelMode.None;
         [Parameter] public EventCallback<WheelEventArgs> OnWheel { get; set; }
         [Parameter] public PanzoomOptions PanzoomOptions { private get; set; } = PanzoomOptions.DefaultOptions;
         [Parameter] public RenderFragment<Panzoom>? ChildContent { get; set; }
 
+        [Parameter] public EventCallback<SetTransformArgs> SetTransform { get; set; }
+
+
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
             await _underlyingPanzoomInterop.DisposeAsync();
+        }
+
+        public async ValueTask PanAsync(double x, double y, IPanOnlyOptions? overridenOptions = default)
+        {
+            await _underlyingPanzoomInterop.PanAsync(x, y, overridenOptions);
         }
 
         public async ValueTask ZoomInAsync()
@@ -76,6 +83,11 @@ namespace BlazorPanzoom
         public async ValueTask<double> GetScaleAsync()
         {
             return await _underlyingPanzoomInterop.GetScaleAsync();
+        }
+
+        public async ValueTask<FocalPoint2> GetPanAsync()
+        {
+            return await _underlyingPanzoomInterop.GetPanAsync();
         }
 
         public async ValueTask SetStyleAsync(string name, string value)
@@ -130,6 +142,11 @@ namespace BlazorPanzoom
                 else if (WheelMode.Equals(WheelMode.ZoomWithWheel))
                 {
                     await PanzoomHelper.RegisterZoomWithWheelAsync(_underlyingPanzoomInterop, ElementReference);
+                }
+
+                if (SetTransform.HasDelegate)
+                {
+                    await PanzoomHelper.SetTransformAsync(_underlyingPanzoomInterop, SetTransform);
                 }
 
                 await UpdateExcludedElements();
