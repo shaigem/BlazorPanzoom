@@ -13,9 +13,9 @@ namespace BlazorPanzoom
             return services;
         }
 
-        public static IServiceCollection AddPanzoomProvider(this IServiceCollection services)
+        public static IServiceCollection AddPanzoomHelper(this IServiceCollection services)
         {
-            services.TryAddScoped<IPanzoomProvider, PanzoomProvider>();
+            services.TryAddScoped<IPanzoomHelper, PanzoomHelper>();
             return services;
         }
 
@@ -23,7 +23,7 @@ namespace BlazorPanzoom
         {
             return services
                 .AddJSBlazorPanzoomInterop()
-                .AddPanzoomProvider();
+                .AddPanzoomHelper();
         }
     }
 }

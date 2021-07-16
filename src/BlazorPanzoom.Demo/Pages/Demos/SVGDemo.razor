@@ -1,4 +1,4 @@
-﻿@inject IPanzoomProvider PanzoomProvider
+﻿@inject IPanzoomHelper _panzoomHelper
 @page "/svg"
 
 <Demo Title="SVG support: move all the things!">
@@ -1620,7 +1620,7 @@
 
     private async Task OnResetClick(MouseEventArgs args)
     {
-        await PanzoomProvider.ResetAllFor(_selectorSet.PanzoomSet);
+        await _panzoomHelper.ResetAllFor(_selectorSet.PanzoomSet);
     }
 
 }

@@ -10,7 +10,7 @@ namespace BlazorPanzoom
     {
         private HashSet<ElementReference>? _excludedElements = null;
         private PanzoomInterop _underlyingPanzoomInterop = null!;
-        [Inject] private IPanzoomProvider PanzoomProvider { get; set; } = null!;
+        [Inject] private IPanzoomHelper PanzoomHelper { get; set; } = null!;
 
         public ElementReference ElementReference { private get; set; }
 
@@ -102,10 +102,10 @@ namespace BlazorPanzoom
             if (firstRender)
             {
                 _underlyingPanzoomInterop =
-                    (PanzoomInterop) await PanzoomProvider.CreateForElementReference(ElementReference, PanzoomOptions);
+                    (PanzoomInterop) await PanzoomHelper.CreateForElementReference(ElementReference, PanzoomOptions);
                 if (!WheelHandler.Equals(WheelHandler.None))
                 {
-                    await PanzoomProvider.RegisterZooming(ElementReference, _underlyingPanzoomInterop, WheelHandler,
+                    await PanzoomHelper.RegisterZooming(ElementReference, _underlyingPanzoomInterop, WheelHandler,
                         OnWheel);
                 }
 

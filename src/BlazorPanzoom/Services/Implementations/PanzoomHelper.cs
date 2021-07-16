@@ -6,11 +6,11 @@ using Microsoft.JSInterop;
 
 namespace BlazorPanzoom
 {
-    public class PanzoomProvider : IPanzoomProvider
+    public class PanzoomHelper : IPanzoomHelper
     {
         private readonly IJSBlazorPanzoomInterop _jsPanzoomInterop;
 
-        public PanzoomProvider(IJSBlazorPanzoomInterop jsPanzoomInterop)
+        public PanzoomHelper(IJSBlazorPanzoomInterop jsPanzoomInterop)
         {
             _jsPanzoomInterop = jsPanzoomInterop;
         }

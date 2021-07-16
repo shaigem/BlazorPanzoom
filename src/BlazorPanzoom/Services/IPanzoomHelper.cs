@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorPanzoom
 {
-    public interface IPanzoomProvider
+    public interface IPanzoomHelper
     {
         public ValueTask RegisterZooming(ElementReference elementReference,
             PanzoomInterop panzoomInterop, WheelHandler wheelHandler,
