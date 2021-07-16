@@ -18,7 +18,7 @@ The list below shows which examples have been implemented.
 
 - [x] [Panning and zooming](https://shaigem.github.io/BlazorPanzoom/)
 - [x] [Panning and focal-point zooming (shift + mousewheel)]
-- [ ] SVG support: move all the things!
+- [x] [SVG support: move all the things!](https://shaigem.github.io/BlazorPanzoom/svg)
 - [x] [Containment within the parent: contain = inside](https://shaigem.github.io/BlazorPanzoom/inside)
 - [x] [Containment within the parent: contain = outside](https://shaigem.github.io/BlazorPanzoom/outside)
 - [x] [Exclude elements within the Panzoom element from event handling](https://shaigem.github.io/BlazorPanzoom/exclude)
