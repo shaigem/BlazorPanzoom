@@ -26,6 +26,7 @@ namespace BlazorPanzoom
 
         public async ValueTask DisposeAsync()
         {
+            GC.SuppressFinalize(this);
             await _underlyingPanzoomInterop.DisposeAsync();
         }
 

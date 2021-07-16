@@ -12,7 +12,6 @@ namespace BlazorPanzoom
             IZoomOnlyOptions? overridenZoomOptions);
 
         ValueTask ZoomWithWheel(PanzoomWheelEventArgs args, IZoomOnlyOptions? overridenOptions = default);
-
         ValueTask ResetAsync(PanzoomOptions resetOptions);
         ValueTask ResetAsync();
         ValueTask SetOptionsAsync(PanzoomOptions options);

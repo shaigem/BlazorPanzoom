@@ -22,6 +22,7 @@ namespace BlazorPanzoom
 
         public async ValueTask DisposeAsync()
         {
+            GC.SuppressFinalize(this);
             await RemoveWheelListener();
             await DestroyAsync();
             await _jsPanzoomReference.DisposeAsync();

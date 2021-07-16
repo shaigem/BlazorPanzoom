@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -44,6 +45,12 @@ namespace BlazorPanzoom
             IJSObjectReference jsPanzoomReference)
         {
             await InvokeVoid("removeWheelListeners", elementReference, jsPanzoomReference);
+        }
+
+        public async ValueTask PerformForAll(string functionName, IEnumerable<IPanzoom> panzoomEnumerable,
+            params object[] args)
+        {
+            await InvokeVoid("performForAllPanzoom", functionName, panzoomEnumerable, args);
         }
 
         private async ValueTask

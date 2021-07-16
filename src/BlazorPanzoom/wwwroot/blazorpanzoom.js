@@ -18,6 +18,17 @@
         }
     }
 
+    performForAllPanzoom(functionName, panzoomList, args) {
+        if (!panzoomList) {
+            return
+        }
+
+        for (let i = 0; i < panzoomList.length; i++) {
+            const ref = panzoomList[i].jsPanzoomReference
+            ref[functionName](args)
+        }
+    }
+
     registerDefaultWheelZoom(element, panzoom) {
         element.parentElement.addEventListener('wheel', panzoom.zoomWithWheel)
     }

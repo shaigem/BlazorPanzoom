@@ -1,5 +1,4 @@
 ﻿@inject IPanzoomProvider PanzoomProvider
-@implements IAsyncDisposable
 @page "/svg"
 
 <Demo Title="SVG support: move all the things!">
@@ -1613,40 +1612,15 @@
 </div>
 </Demo>
 
+<PanzoomSelectorSet @ref="_selectorSet" Selector="svg.panzoom path"/>
+
 @code {
 
-    private readonly List<PanzoomInterop> _panzoomList = new();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var createdPanzoomList = await PanzoomProvider.CreateForSelector("svg.panzoom path");
-
-            foreach (var panzoom in createdPanzoomList)
-            {
-                _panzoomList.Add(panzoom as PanzoomInterop);
-            }
-        }
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
+    private PanzoomSelectorSet _selectorSet;
 
     private async Task OnResetClick(MouseEventArgs args)
     {
-        foreach (var panzoom in _panzoomList)
-        {
-    // TODO this is laggy since it makes a JS call for every single item in the list. Find a way to batch calls?
-            await panzoom.ResetAsync();
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        foreach (var panzoomControl in _panzoomList)
-        {
-            await panzoomControl.DisposeAsync();
-        }
+        await PanzoomProvider.ResetAllFor(_selectorSet.PanzoomSet);
     }
 
 }
