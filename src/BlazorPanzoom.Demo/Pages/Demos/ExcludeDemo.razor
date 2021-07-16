@@ -2,7 +2,7 @@
 
 <Demo Title="Exclude elements within the Panzoom element from event handling">
     <div class="panzoom-parent">
-        <BlazorPanzoomCtrl PanzoomOptions=@(new PanzoomOptions {ExcludeClass = "custom-excluded-class"})>
+        <Panzoom PanzoomOptions=@(new PanzoomOptions {ExcludeClass = "custom-excluded-class"})>
             <div style="border: 2px dotted; width: 400px; margin: 0 auto" @ref="context.ElementReference" class="panzoom">
                 <img style="width: 100%; height: 100%" src="awesome_tiger.svg" alt="image"/>
                 <a @ref="context.ExcludedElementReference" style="position: absolute; top: 20px; left: 0; right: 0; padding: 10px 0; text-align: center; font-size: 20px; color: #baffc1; background-color: rgba(0, 0, 0, 0.8); border-width: 1px; border-color: #dd33aa;"
@@ -27,6 +27,6 @@
                     This one will allow dragging.
                 </a>
             </div>
-        </BlazorPanzoomCtrl>
+        </Panzoom>
     </div>
 </Demo>

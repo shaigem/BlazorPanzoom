@@ -2,6 +2,8 @@
 {
     public enum WheelHandler
     {
-        ZoomOnScroll, Custom, None
+        ZoomOnScroll,
+        Custom,
+        None
     }
 }

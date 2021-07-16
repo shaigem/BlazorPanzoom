@@ -1615,18 +1615,17 @@
 
 @code {
 
-    private List<DefaultPanzoom> _panzoomControls = new();
+    private readonly List<PanzoomInterop> _panzoomList = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
-
     {
         if (firstRender)
         {
-            var panzooms = await PanzoomProvider.CreateForSelector("svg.panzoom path");
+            var createdPanzoomList = await PanzoomProvider.CreateForSelector("svg.panzoom path");
 
-            foreach (var panzoomControl in panzooms)
+            foreach (var panzoom in createdPanzoomList)
             {
-                _panzoomControls.Add(panzoomControl as DefaultPanzoom);
+                _panzoomList.Add(panzoom as PanzoomInterop);
             }
         }
         await base.OnAfterRenderAsync(firstRender);
@@ -1635,15 +1634,16 @@
 
     private async Task OnResetClick(MouseEventArgs args)
     {
-        foreach (var panzoomControl in _panzoomControls)
+        foreach (var panzoom in _panzoomList)
         {
-            await panzoomControl.ResetAsync();
+    // TODO this is laggy since it makes a JS call for every single item in the list. Find a way to batch calls?
+            await panzoom.ResetAsync();
         }
     }
 
     public async ValueTask DisposeAsync()
     {
-        foreach (var panzoomControl in _panzoomControls)
+        foreach (var panzoomControl in _panzoomList)
         {
             await panzoomControl.DisposeAsync();
         }

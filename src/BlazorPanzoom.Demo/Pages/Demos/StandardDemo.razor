@@ -11,11 +11,11 @@
     </div>
 
     <div class="panzoom-parent">
-        <BlazorPanzoomCtrl @ref="_panzoom">
+        <Panzoom @ref="_panzoom">
             <div @ref="@context.ElementReference" class="panzoom">
                 <img style="width: 400px; height: 400px" src="awesome_tiger.svg" alt="image"/>
             </div>
-        </BlazorPanzoomCtrl>
+        </Panzoom>
     </div>
 </Demo>
 
@@ -45,7 +45,7 @@
         }
     }
 
-    private BlazorPanzoomCtrl _panzoom;
+    private Panzoom _panzoom;
 
     private async Task OnZoomInClick(MouseEventArgs args)
     {
