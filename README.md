@@ -14,7 +14,7 @@ s [demo page](https://timmywil.com/panzoom/demo/).
 
 The list below shows which examples have been implemented.
 
-#### Demo Example List (6/10):
+#### Demo Example List (7/10):
 
 - [x] [Panning and zooming](https://shaigem.github.io/BlazorPanzoom/)
 - [x] [Panning and focal-point zooming (shift + mousewheel)]
