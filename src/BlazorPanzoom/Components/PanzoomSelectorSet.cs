@@ -24,7 +24,7 @@ namespace BlazorPanzoom
         {
             if (firstRender)
             {
-                var list = await PanzoomHelper.CreateForSelector(Selector, PanzoomOptions);
+                var list = await PanzoomHelper.CreateForSelectorAsync(Selector, PanzoomOptions);
 
                 foreach (var panzoom in list)
                 {

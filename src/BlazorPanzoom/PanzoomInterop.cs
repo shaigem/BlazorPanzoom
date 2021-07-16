@@ -58,7 +58,7 @@ namespace BlazorPanzoom
                 overridenZoomOptions);
         }
 
-        public async ValueTask ZoomWithWheel(WheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
+        public async ValueTask ZoomWithWheelAsync(WheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
         {
             var currentOptions = await GetOptionsAsync();
             var currentScale = await GetScaleAsync();

@@ -8,20 +8,21 @@ namespace BlazorPanzoom
 {
     public interface IPanzoomHelper
     {
-        public ValueTask<PanzoomInterop> CreateForElementReference(ElementReference elementReference,
+        public ValueTask<PanzoomInterop> CreateForElementReferenceAsync(ElementReference elementReference,
             PanzoomOptions? panzoomOptions = default);
 
-        public ValueTask<PanzoomInterop[]> CreateForSelector(string selector, PanzoomOptions? panzoomOptions = default);
+        public ValueTask<PanzoomInterop[]> CreateForSelectorAsync(string selector,
+            PanzoomOptions? panzoomOptions = default);
 
-        public ValueTask RegisterZoomWithWheel(
+        public ValueTask RegisterZoomWithWheelAsync(
             PanzoomInterop panzoom, ElementReference? elementReference = null);
 
-        public ValueTask RegisterWheelListener(PanzoomInterop panzoom, EventCallback<WheelEventArgs> onWheel,
+        public ValueTask RegisterWheelListenerAsync(PanzoomInterop panzoom, EventCallback<WheelEventArgs> onWheel,
             ElementReference? elementReference = null);
 
-        public ValueTask RegisterWheelListener(PanzoomInterop panzoom, object receiver,
+        public ValueTask RegisterWheelListenerAsync(PanzoomInterop panzoom, object receiver,
             Func<WheelEventArgs, Task> onWheel, ElementReference? elementReference = null);
 
-        public ValueTask ResetAllFor(IEnumerable<PanzoomInterop> panzoomInterops);
+        public ValueTask ResetAllForAsync(IEnumerable<PanzoomInterop> panzoomInterops);
     }
 }

@@ -57,7 +57,8 @@ namespace BlazorPanzoom
             await InvokeVoid("destroyPanzoom", jsPanzoomReference);
         }
 
-        public async ValueTask PerformForAll(string functionName, IEnumerable<IJSObjectReference> jsPanzoomReferences,
+        public async ValueTask PerformForAllAsync(string functionName,
+            IEnumerable<IJSObjectReference> jsPanzoomReferences,
             params object[] args)
 
         {

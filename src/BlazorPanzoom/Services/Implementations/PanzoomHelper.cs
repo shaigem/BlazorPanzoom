@@ -24,7 +24,8 @@ namespace BlazorPanzoom
             _jsPanzoomInterop = jsPanzoomInterop;
         }
 
-        public async ValueTask RegisterZoomWithWheel(PanzoomInterop panzoom, ElementReference? elementReference = null)
+        public async ValueTask RegisterZoomWithWheelAsync(PanzoomInterop panzoom,
+            ElementReference? elementReference = null)
         {
             await _jsPanzoomInterop.RegisterZoomWithWheelAsync(panzoom.JSPanzoomReference, elementReference);
 
@@ -34,7 +35,7 @@ namespace BlazorPanzoom
             panzoom.OnRemoveListener = RemoveTask;
         }
 
-        public async ValueTask RegisterWheelListener(PanzoomInterop panzoom, EventCallback<WheelEventArgs> onWheel,
+        public async ValueTask RegisterWheelListenerAsync(PanzoomInterop panzoom, EventCallback<WheelEventArgs> onWheel,
             ElementReference? elementReference = null)
         {
             var dotNetRef = DotNetObjectReference.Create<IPanzoomWheelListener>(panzoom);
@@ -47,20 +48,21 @@ namespace BlazorPanzoom
             panzoom.OnRemoveListener = RemoveTask;
         }
 
-        public async ValueTask RegisterWheelListener(PanzoomInterop panzoom, object receiver,
+        public async ValueTask RegisterWheelListenerAsync(PanzoomInterop panzoom, object receiver,
             Func<WheelEventArgs, Task> onWheel, ElementReference? elementReference = null)
         {
-            await RegisterWheelListener(panzoom, EventCallback.Factory.Create(receiver, onWheel), elementReference);
+            await RegisterWheelListenerAsync(panzoom, EventCallback.Factory.Create(receiver, onWheel),
+                elementReference);
         }
 
-        public async ValueTask<PanzoomInterop> CreateForElementReference(ElementReference elementReference,
+        public async ValueTask<PanzoomInterop> CreateForElementReferenceAsync(ElementReference elementReference,
             PanzoomOptions? panzoomOptions = default)
         {
             var panzoomRef = await _jsPanzoomInterop.CreatePanzoomAsync(elementReference, panzoomOptions);
             return Create(panzoomRef);
         }
 
-        public async ValueTask<PanzoomInterop[]> CreateForSelector(string selector,
+        public async ValueTask<PanzoomInterop[]> CreateForSelectorAsync(string selector,
             PanzoomOptions? panzoomOptions = default)
         {
             var jsPanzoomReferences = await _jsPanzoomInterop.CreatePanzoomAsync(selector, panzoomOptions);
@@ -76,10 +78,10 @@ namespace BlazorPanzoom
             return panzoomControls;
         }
 
-        public async ValueTask ResetAllFor(IEnumerable<PanzoomInterop> panzoomInterops)
+        public async ValueTask ResetAllForAsync(IEnumerable<PanzoomInterop> panzoomInterops)
         {
             var references = panzoomInterops.Select(p => p.JSPanzoomReference).ToArray();
-            await _jsPanzoomInterop.PerformForAll("reset", references);
+            await _jsPanzoomInterop.PerformForAllAsync("reset", references);
         }
 
         private PanzoomInterop Create(IJSObjectReference jsPanzoomReference)

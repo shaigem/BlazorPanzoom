@@ -83,9 +83,9 @@ namespace BlazorPanzoom
             await _underlyingPanzoomInterop.DestroyAsync();
         }
 
-        public async ValueTask ZoomWithWheel(WheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
+        public async ValueTask ZoomWithWheelAsync(WheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
         {
-            await _underlyingPanzoomInterop.ZoomWithWheel(args, overridenOptions);
+            await _underlyingPanzoomInterop.ZoomWithWheelAsync(args, overridenOptions);
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -109,7 +109,8 @@ namespace BlazorPanzoom
                 }
 
                 _underlyingPanzoomInterop =
-                    (PanzoomInterop) await PanzoomHelper.CreateForElementReference(ElementReference, PanzoomOptions);
+                    (PanzoomInterop) await PanzoomHelper.CreateForElementReferenceAsync(ElementReference,
+                        PanzoomOptions);
 
                 if (WheelMode.Equals(WheelMode.Custom))
                 {
@@ -118,11 +119,12 @@ namespace BlazorPanzoom
                         throw new ArgumentException("OnWheel must be set when using WheelMode.Custom!");
                     }
 
-                    await PanzoomHelper.RegisterWheelListener(_underlyingPanzoomInterop, OnWheel, ElementReference);
+                    await PanzoomHelper.RegisterWheelListenerAsync(_underlyingPanzoomInterop, OnWheel,
+                        ElementReference);
                 }
                 else if (WheelMode.Equals(WheelMode.ZoomWithWheel))
                 {
-                    await PanzoomHelper.RegisterZoomWithWheel(_underlyingPanzoomInterop, ElementReference);
+                    await PanzoomHelper.RegisterZoomWithWheelAsync(_underlyingPanzoomInterop, ElementReference);
                 }
 
                 await UpdateExcludedElements();

@@ -28,7 +28,7 @@ namespace BlazorPanzoom
         public ValueTask DestroyPanzoomAsync(IJSObjectReference jsPanzoomReference);
 
         public ValueTask
-            PerformForAll(string functionName, IEnumerable<IJSObjectReference> jsPanzoomReferences,
+            PerformForAllAsync(string functionName, IEnumerable<IJSObjectReference> jsPanzoomReferences,
                 params object[] args);
     }
 }
