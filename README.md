@@ -86,6 +86,7 @@ component.
     </Panzoom>
 </div>
 ```
+***
 ### Full Example
 [FocalDemo.razor] ([Live Demo][Panning and focal-point zooming (shift + mousewheel)])
 
