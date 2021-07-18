@@ -4,34 +4,6 @@ using Microsoft.JSInterop;
 
 namespace BlazorPanzoom
 {
-    public delegate void BlazorPanzoomEventHandler<in T>(T args) where T : IBlazorPanzoomEvent;
-
-    public delegate void BlazorPanzoomEventHandler();
-
-    public interface IBlazorPanzoomEvent
-    {
-    }
-
-    public static class BlazorPanzoomEventExtensions
-    {
-        public static Task InvokeAsync(this BlazorPanzoomEventHandler? handler)
-        {
-            handler?.Invoke();
-            return Task.CompletedTask;
-        }
-
-        public static Task InvokeAsync<T>(this BlazorPanzoomEventHandler<T>? handler, IBlazorPanzoomEvent @event)
-            where T : IBlazorPanzoomEvent
-        {
-            handler?.Invoke((T) @event);
-            return Task.CompletedTask;
-        }
-    }
-
-
-    public record CustomWheelEventArgs
-        (double DeltaX, double DeltaY, double ClientX, double ClientY, bool ShiftKey) : IBlazorPanzoomEvent;
-
     public class PanzoomInterop : IPanzoom, IAsyncDisposable
     {
         private readonly IJSObjectReference _jsPanzoomReference;
