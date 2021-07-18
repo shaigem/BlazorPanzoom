@@ -152,7 +152,7 @@ namespace BlazorPanzoom
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public FocalPoint? Focal { private get; init; }
+        public ReadOnlyFocalPoint? Focal { private get; init; }
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

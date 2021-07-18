@@ -84,7 +84,7 @@ namespace BlazorPanzoom
             return await _underlyingPanzoomInterop.GetScaleAsync();
         }
 
-        public async ValueTask<FocalPoint2> GetPanAsync()
+        public async ValueTask<ReadOnlyFocalPoint> GetPanAsync()
         {
             return await _underlyingPanzoomInterop.GetPanAsync();
         }

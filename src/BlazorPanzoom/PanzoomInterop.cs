@@ -99,9 +99,9 @@ namespace BlazorPanzoom
             return await _jsPanzoomReference.InvokeAsync<double>("getScale");
         }
 
-        public async ValueTask<FocalPoint2> GetPanAsync()
+        public async ValueTask<ReadOnlyFocalPoint> GetPanAsync()
         {
-            return await _jsPanzoomReference.InvokeAsync<FocalPoint2>("getPan");
+            return await _jsPanzoomReference.InvokeAsync<ReadOnlyFocalPoint>("getPan");
         }
 
         public async ValueTask SetStyleAsync(string name, string value)

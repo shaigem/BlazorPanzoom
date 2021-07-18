@@ -18,7 +18,7 @@ namespace BlazorPanzoom
         ValueTask SetOptionsAsync(PanzoomOptions options);
         ValueTask<PanzoomOptions> GetOptionsAsync();
         ValueTask<double> GetScaleAsync();
-        ValueTask<FocalPoint2> GetPanAsync();
+        ValueTask<ReadOnlyFocalPoint> GetPanAsync();
         ValueTask SetStyleAsync(string name, string value);
         ValueTask DestroyAsync();
     }
