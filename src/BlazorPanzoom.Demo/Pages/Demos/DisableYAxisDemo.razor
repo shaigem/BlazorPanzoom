@@ -1,6 +1,6 @@
 ﻿@page "/oneaxis"
 
-<Demo Title="Disabling one axis">
+<Demo Title="Disabling one axis" DemoType="GetType()">
     <div class="panzoom-parent">
         <Panzoom PanzoomOptions="@(new PanzoomOptions {DisableYAxis = true})">
             <div style="width: 400px; margin: 0 auto" @ref="@context.ElementReference" class="panzoom">

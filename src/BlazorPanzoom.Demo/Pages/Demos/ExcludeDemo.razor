@@ -1,6 +1,6 @@
 ﻿@page "/exclude"
 
-<Demo Title="Exclude elements within the Panzoom element from event handling">
+<Demo Title="Exclude elements within the Panzoom element from event handling" DemoType="GetType()">
     <div class="panzoom-parent">
         <Panzoom PanzoomOptions=@(new PanzoomOptions {ExcludeClass = "custom-excluded-class"})>
             <div style="border: 2px dotted; width: 400px; margin: 0 auto" @ref="context.ElementReference" class="panzoom">

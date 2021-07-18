@@ -14,7 +14,7 @@ s [demo page](https://timmywil.com/panzoom/demo/).
 
 The list below shows which examples have been implemented.
 
-#### Demo Example List (10/10):
+#### Demo List
 
 - [x] [Panning and zooming](https://shaigem.github.io/BlazorPanzoom/)
 - [x] [Panning and focal-point zooming (shift + mousewheel)]
@@ -27,20 +27,37 @@ The list below shows which examples have been implemented.
 - [x] [Adding a transform to a child](https://shaigem.github.io/BlazorPanzoom/transform)
 - [x] [A Panzoom instance within another Panzoom instance](https://shaigem.github.io/BlazorPanzoom/inception)
 
+## Prerequisites
+- [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0)
+
 ## Installation
 
-Will be published soon on Nuget...
+TODO how do you get the package/library?
 
-## API Documentation
-
-Please see panzoom's [README #doc] for more documentation on the API.
-
+Add the following to `_Imports.razor`
+```razor
+@using BlazorPanzoom
+```
+Add the following to `index.html` (client-side) or `_Host.cshtml` (server-side) in `body`
+```razor
+<script src="_content/BlazorPanzoom/panzoom-4.4.1.min.js"></script>
+<script src="_content/BlazorPanzoom/blazorpanzoom.js"></script>
+```
+#### Client-Side Config (WebAssembly)
+Add the following in `Program.cs` in the place you add services
+```c#
+builder.Services.AddBlazorPanzoomServices();
+```
+#### Server-Side Config
+Add the following to `Startup.cs` in the place you add services
+```c#
+builder.Services.AddBlazorPanzoomServices();
+```
 ## Usage
 
 ### Simple Example
 
-Wrap the element that you want to enable panning and zooming for with `<Panzoom>`. For example, I want
-to make an image panzoomable:
+Wrap the element that you want to enable panning and zooming for with `<Panzoom>`:
 
 ```html
 <!-- Using solid border-style to highlight the image's panning & zooming boundary -->
@@ -54,96 +71,79 @@ to make an image panzoomable:
 **Note:** you must use `@ref="@context.ElementReference"` on the element that you want to enable panning and zooming
 for!
 
-This example enables panning for the `<img>` component via mouse input. Zooming is not enabled by default.
+This example enables panning for the `<img>` component via mouse input. Zooming is not enabled by default on Desktop.
 
 #### Zoom via Mouse Wheel
 
-To enable zooming of an element through the mouse wheel, pass `WheelHandler="@WheelHandler.ZoomOnScroll"` to
+To enable zooming of an element through the mouse wheel, pass `WheelMode="@WheelMode.ZoomWithWheel"` to
 the `<Panzoom>`
 component.
 
 ```html
 <div class="my-main" style="border-style: solid;">
-    <Panzoom WheelHandler="WheelHandler.ZoomOnScroll">
+    <Panzoom WheelMode="WheelMode.ZoomWithWheel">
         <img @ref="@context.ElementReference" src="https://homepages.cae.wisc.edu/~ece533/images/pool.png" alt="image"/>
     </Panzoom>
 </div>
 ```
-#### Custom Zooming: Zoom on Shift Key + Mouse Scroll
+### Full Example
+[FocalDemo.razor] ([Live Demo][Panning and focal-point zooming (shift + mousewheel)])
 
-The default `WheelHandler.ZoomOnScroll` is great for quickly getting an element to be zoom-able. However, what if you
-want to implement custom behavior? For example, I only want to zoom when holding the `Shift` key.
+Demonstrates:
+- Registering an element to use `Panzoom`
+  - Setting options via `PanzoomOptions`
+    
+See issue [#3](https://github.com/shaigem/BlazorPanzoom/issues/3#issue-941365085) for a list of supported options. For documentation
+    on what each option does, see [panzoom #doc][README #doc].
 
-Steps to implementing a custom scroll listener:
-1. Set `WheelHandler` of a `<Panzoom>` component to `Custom` 
-2. Create a Task function (example: `private async Task OnWheel(PanzoomWheelEventArgs args)`)
-3. Set `OnWheel` of a `<Panzoom>` component to the new Task function
+- Calling `Panzoom` functions from code (`ResetAsync` & `ZoomWithWheelAsync`)
+- Custom zoom wheel handling (zoom only while holding the `Shift` key)
+```razor
+    <div class="buttons">
+        <button @onclick="OnResetClick">Reset</button>
+    </div>
 
-```c#
-<div class="my-main" style="border-style: solid;">
-    <Panzoom @ref="_panzoom" WheelHandler="WheelHandler.Custom" OnWheel="@OnWheel">
-        <img @ref="@context.ElementReference" src="https://homepages.cae.wisc.edu/~ece533/images/pool.png" alt="image"/>
-    </Panzoom>
-</div>
-
-@code {
+    <div class="panzoom-parent" style="border-width: 10px;">
+        <!-- We wrap the <img> element with the Panzoom control -->
+        <Panzoom @ref="_panzoom" PanzoomOptions="@(new PanzoomOptions {Canvas = true})" WheelMode="@WheelMode.Custom" OnWheel="@OnWheel">
+            <!-- MUST set @ref="@context.ElementReference" to the <Panzoom>'s context -->
+            <div @ref="@context.ElementReference" class="panzoom" style="width: 400px; height: 400px; margin: 0 auto;">
+                <img style="width: 100%; height: 100%;" src="target.png" alt="image"/>
+            </div>
+        </Panzoom>
+    </div>
+    
+ @code {
 
     private Panzoom _panzoom;
-        
-    private async Task OnWheel(PanzoomWheelEventArgs args)
+
+    private async Task OnResetClick(MouseEventArgs args) => await _panzoom.ResetAsync();
+
+    private async Task OnWheel(CustomWheelEventArgs args)
     {
         if (!args.ShiftKey)
         {
             return;
         }
-        await _panzoom.ZoomWithWheel(args);
+        await _panzoom.ZoomWithWheelAsync(args);
     }
+
 }
 ```
-The `<panzoom>.ZoomWithWheel(PanzoomWheelEventArgs)` function handles zooming via mouse wheel scroll.
 
-See [FocalDemo.razor] and its corresponding demo [Panning and focal-point zooming (shift + mousewheel)] for a similar example to this one.
+For more examples, see the [Demos](https://github.com/shaigem/BlazorPanzoom/tree/master/src/BlazorPanzoom.Demo/Pages/Demos) folder.
 
-Our simple example image is now pannable and zoomable:
+## Documentation
 
-![A simple example image](https://github.com/shaigem/BlazorPanzoom/blob/f653196e926a8d661bb3a2507e331353c25028b2/docs/example_simple.png)
-* * *
-### Passing Options via `PanzoomOptions`
+Please see the [wiki](https://github.com/shaigem/BlazorPanzoom/wiki) for documentation and help.
 
-The `<Panzoom>` component allows you to set its options with the `PanzoomOptions` object.
+For documentation on the panzoom JavaScript API, click [here][README #doc].
 
-#### Example: Disable panning with the `DisablePan` option
-
-Through the component:
-```html
-<Panzoom PanzoomOptions=@(new PanzoomOptions{DisablePan = true})"></Panzoom>
-```
-
-Through the object (see [StandardDemo.razor #L44]):
-```c#
-private Panzoom _panzoom;
-// ...
-_panzoom.SetOptionsAsync(new () {DisablePan = true});
-```
-
-**Note:** not all options are available. 
-Please see issue [#3](https://github.com/shaigem/BlazorPanzoom/issues/3#issue-941365085) for the list of available options.
-
-View panzoom's [README #doc] for the list of all options and their usage.
-* * *
-### Warning about `ElementReference`
-
-...
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
+[FocalDemo.razor]: src/BlazorPanzoom.Demo/Pages/Demos/FocalDemo.razor
 [README #doc]: https://github.com/timmywil/panzoom/blob/39524b1ec721e5f7cabcabc4d7e467968dffe778/README.md#documentation
 [Panning and focal-point zooming (shift + mousewheel)]: https://shaigem.github.io/BlazorPanzoom/focal/
-[FocalDemo.razor]: https://github.com/shaigem/BlazorPanzoom/blob/49e7f72bb4fe3bc247dc80117858232ceef82b4e/src/BlazorPanzoom.Demo/Pages/Demos/FocalDemo.razor
-[StandardDemo.razor #L44]: https://github.com/shaigem/BlazorPanzoom/blob/e687aa1b4670e962e0c5efed98f32292506cd624/src/BlazorPanzoom.Demo/Pages/Demos/StandardDemo.razor#L44
