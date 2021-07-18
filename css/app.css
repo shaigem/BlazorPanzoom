@@ -25,10 +25,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 * {
     box-sizing: border-box;
 }
+
 body {
     margin: 0;
     background: #222222;
 }
+
+#app {
+    color: white;
+}
+
 .content {
     display: flex;
     flex-direction: column;
@@ -36,6 +42,7 @@ body {
     margin: 1.5em auto;
     color: #333666;
 }
+
 .main-header {
     color: white;
     padding: 0 20px;
@@ -161,9 +168,19 @@ label {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+@media (max-width: 1000px) {
+    .buttons {
+        flex-direction: column;
     }
+
+    .buttons button {
+        margin: 5px
+    }
+}
