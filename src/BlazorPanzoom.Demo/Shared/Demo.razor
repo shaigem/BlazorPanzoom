@@ -1,6 +1,5 @@
 ﻿<div class="demo">
-    <h2 style="text-decoration: none; color: black;">@Title</h2>
-    <code>@Code</code>
+    <h2 style="text-decoration: none; color: black; margin-top: 10px">@Title</h2>
     <p>@SubTitle</p>
     <div class="live-example">
         @ChildContent
@@ -14,9 +13,6 @@
 
     [Parameter]
     public string Title { get; set; }
-
-    [Parameter]
-    public string Code { get; set; }
 
     [Parameter]
     public string SubTitle { get; set; }

@@ -3,9 +3,17 @@
 
 <head>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" id="vp" name="viewport"/>
     <title>BlazorPanzoom.Demo</title>
     <base/>
+    <script>
+        window.onload = function () {
+            if (screen.width < 820) {
+                const vp = document.getElementById('vp');
+                vp.setAttribute('content', 'user-scalable=no, width=800');
+            }
+        }
+    </script>
     <!-- Start Single Page Apps for GitHub Pages -->
     <script type="text/javascript">
         // Single Page Apps for GitHub Pages
@@ -26,6 +34,7 @@
                 window.history.replaceState(null, null,
                     l.pathname.slice(0, -1) + decoded + l.hash
                 );
+                38
             }
         }(window.location))
     </script>
