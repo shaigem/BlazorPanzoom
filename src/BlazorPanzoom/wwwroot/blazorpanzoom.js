@@ -3,6 +3,11 @@
     constructor() {
     }
 
+    fire(dispatcher, eventName, args) {
+        const name = "On" + eventName + "Event"
+        dispatcher.invokeMethodAsync(name, args)
+    }
+
     createPanzoomForReference(element, options) {
         const panzoom = Panzoom(element, options)
         panzoom.boundElement = element
@@ -40,7 +45,7 @@
         }
         const opts = {
             setTransform: (elem, {x, y, scale, isSVG}) => {
-                dotnetReference.invokeMethodAsync('OnSetTransform', {x, y, scale, isSVG})
+                this.fire(dotnetReference, 'SetTransform', {x, y, scale, isSVG})
             }
         }
         panzoom.setOptions(opts)
@@ -53,13 +58,13 @@
 
     registerWheelListener(dotnetReference, panzoom, element) {
         const parent = element ? element.parentElement : panzoom.boundElement.parentElement
-        panzoom.dotNetWheelListenerReference = dotnetReference
         parent.addEventListener('wheel', panzoom.boundWheelListener = this.wheelHandler.bind(this, dotnetReference))
     }
 
+
     wheelHandler(dotnetReference, event) {
         event.preventDefault()
-        dotnetReference.invokeMethodAsync('OnCustomWheelEvent', {
+        this.fire(dotnetReference, 'CustomWheel', {
             deltaX: event.deltaX,
             deltaY: event.deltaY,
             clientX: event.clientX,
@@ -78,8 +83,6 @@
         const parent = element ? element.parentElement : panzoom.boundElement.parentElement
         if (panzoom.boundWheelListener) {
             parent.removeEventListener('wheel', panzoom.boundWheelListener);
-            panzoom.dotNetWheelListenerReference.dispose()
-            delete panzoom.dotNetWheelListenerReference
             delete panzoom.boundWheelListener
         }
     }

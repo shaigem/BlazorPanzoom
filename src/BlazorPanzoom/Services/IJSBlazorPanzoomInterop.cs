@@ -19,7 +19,7 @@ namespace BlazorPanzoom
             IJSObjectReference jsPanzoomReference, ElementReference? elementReference = null);
 
         public ValueTask RegisterWheelListenerAsync(
-            DotNetObjectReference<IPanzoomWheelListener> dotNetObjectReference,
+            DotNetObjectReference<PanzoomInterop> dotNetObjectReference,
             IJSObjectReference jsPanzoomReference, ElementReference? elementReference = null);
 
         public ValueTask RemoveZoomWithWheelAsync(IJSObjectReference jsPanzoomReference,

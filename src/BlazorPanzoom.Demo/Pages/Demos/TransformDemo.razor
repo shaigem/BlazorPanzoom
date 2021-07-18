@@ -27,9 +27,9 @@
     private Panzoom _panzoom;
 
 
-    private async Task SetTransformE(SetTransformArgs args)
+    private async Task SetTransformE(SetTransformEventArgs eventArgs)
     {
-        await _panzoom.SetStyleAsync("transform", $"rotate({args.X / 20}deg) scale({args.Scale}) translate({args.X}px, {args.Y}px)");
+        await _panzoom.SetStyleAsync("transform", $"rotate({eventArgs.X / 20}deg) scale({eventArgs.Scale}) translate({eventArgs.X}px, {eventArgs.Y}px)");
     }
 
 }

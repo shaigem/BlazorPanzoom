@@ -3,18 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace BlazorPanzoom
 {
-    public interface IPanzoomWheelListener
-    {
-        public EventCallback<WheelEventArgs> OnWheel { get; set; }
-        public Func<ValueTask>? OnRemoveListener { get; set; }
-        public ValueTask OnCustomWheelEvent(WheelEventArgs args);
-    }
-
     public class PanzoomHelper : IPanzoomHelper
     {
         private readonly IJSBlazorPanzoomInterop _jsPanzoomInterop;
@@ -24,13 +16,13 @@ namespace BlazorPanzoom
             _jsPanzoomInterop = jsPanzoomInterop;
         }
 
-        public async ValueTask SetTransformAsync(PanzoomInterop panzoom, EventCallback<SetTransformArgs> onSetTransform)
+        public async ValueTask SetTransformAsync(PanzoomInterop panzoom,
+            EventCallback<SetTransformEventArgs> onSetTransform)
         {
             var dotNetRef = DotNetObjectReference.Create<IPanzoom>(panzoom);
-
             await _jsPanzoomInterop.RegisterSetTransformAsync(dotNetRef, panzoom.JSPanzoomReference);
-
-            panzoom.T = onSetTransform;
+            panzoom.OnSetTransform += args => onSetTransform.InvokeAsync(args);
+            panzoom.OnDispose += dotNetRef.Dispose;
         }
 
         public async ValueTask RegisterZoomWithWheelAsync(PanzoomInterop panzoom,
@@ -38,27 +30,31 @@ namespace BlazorPanzoom
         {
             await _jsPanzoomInterop.RegisterZoomWithWheelAsync(panzoom.JSPanzoomReference, elementReference);
 
-            ValueTask RemoveTask() =>
-                _jsPanzoomInterop.RemoveZoomWithWheelAsync(panzoom.JSPanzoomReference, elementReference);
+            async void RemoveTask() =>
+                await _jsPanzoomInterop.RemoveZoomWithWheelAsync(panzoom.JSPanzoomReference, elementReference);
 
-            panzoom.OnRemoveListener = RemoveTask;
+            panzoom.OnDispose += RemoveTask;
         }
 
-        public async ValueTask RegisterWheelListenerAsync(PanzoomInterop panzoom, EventCallback<WheelEventArgs> onWheel,
+        public async ValueTask RegisterWheelListenerAsync(PanzoomInterop panzoom,
+            EventCallback<CustomWheelEventArgs> onWheel,
             ElementReference? elementReference = null)
         {
-            var dotNetRef = DotNetObjectReference.Create<IPanzoomWheelListener>(panzoom);
+            var dotNetRef = DotNetObjectReference.Create(panzoom);
             await _jsPanzoomInterop.RegisterWheelListenerAsync(dotNetRef, panzoom.JSPanzoomReference, elementReference);
 
-            ValueTask RemoveTask() =>
-                _jsPanzoomInterop.RemoveWheelListenerAsync(panzoom.JSPanzoomReference, elementReference);
+            async void RemoveTask()
+            {
+                await _jsPanzoomInterop.RemoveWheelListenerAsync(panzoom.JSPanzoomReference, elementReference);
+                dotNetRef.Dispose();
+            }
 
-            panzoom.OnWheel = onWheel;
-            panzoom.OnRemoveListener = RemoveTask;
+            panzoom.OnCustomWheel += args => onWheel.InvokeAsync(args);
+            panzoom.OnDispose += RemoveTask;
         }
 
         public async ValueTask RegisterWheelListenerAsync(PanzoomInterop panzoom, object receiver,
-            Func<WheelEventArgs, Task> onWheel, ElementReference? elementReference = null)
+            Func<CustomWheelEventArgs, Task> onWheel, ElementReference? elementReference = null)
         {
             await RegisterWheelListenerAsync(panzoom, EventCallback.Factory.Create(receiver, onWheel),
                 elementReference);
@@ -68,7 +64,9 @@ namespace BlazorPanzoom
             PanzoomOptions? panzoomOptions = default)
         {
             var panzoomRef = await _jsPanzoomInterop.CreatePanzoomAsync(elementReference, panzoomOptions);
-            return Create(panzoomRef);
+            var panzoom = Create(panzoomRef);
+
+            return panzoom;
         }
 
         public async ValueTask<PanzoomInterop[]> CreateForSelectorAsync(string selector,
@@ -95,11 +93,10 @@ namespace BlazorPanzoom
 
         private PanzoomInterop Create(IJSObjectReference jsPanzoomReference)
         {
-            ValueTask DisposeTask() => _jsPanzoomInterop.DestroyPanzoomAsync(jsPanzoomReference);
-            return new PanzoomInterop(jsPanzoomReference)
-            {
-                OnDispose = DisposeTask
-            };
+            async void DisposeTask() => await _jsPanzoomInterop.DestroyPanzoomAsync(jsPanzoomReference);
+            var panzoom = new PanzoomInterop(jsPanzoomReference);
+            panzoom.OnDispose += DisposeTask;
+            return panzoom;
         }
     }
 }

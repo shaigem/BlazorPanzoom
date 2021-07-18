@@ -35,12 +35,12 @@
     private Panzoom _panzoom;
     private Panzoom _panzoom2;
 
-    private async Task SetTransformCustom(SetTransformArgs args)
+    private async Task SetTransformCustom(SetTransformEventArgs eventArgs)
     {
         var parentScale = await _panzoom.GetScaleAsync();
         await _panzoom2.SetStyleAsync(
             "transform",
-            $"scale({args.Scale}) translate({args.X / parentScale}px, {args.Y / parentScale}px)");
+            $"scale({eventArgs.Scale}) translate({eventArgs.X / parentScale}px, {eventArgs.Y / parentScale}px)");
     }
 
     private async Task OnZoomInClick(MouseEventArgs args)

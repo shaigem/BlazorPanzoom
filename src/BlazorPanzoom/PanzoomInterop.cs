@@ -1,12 +1,38 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace BlazorPanzoom
 {
-    public class PanzoomInterop : IPanzoom, IPanzoomWheelListener, IAsyncDisposable
+    public delegate void BlazorPanzoomEventHandler<in T>(T args) where T : IBlazorPanzoomEvent;
+
+    public delegate void BlazorPanzoomEventHandler();
+
+    public interface IBlazorPanzoomEvent
+    {
+    }
+
+    public static class BlazorPanzoomEventExtensions
+    {
+        public static Task InvokeAsync(this BlazorPanzoomEventHandler? handler)
+        {
+            handler?.Invoke();
+            return Task.CompletedTask;
+        }
+
+        public static Task InvokeAsync<T>(this BlazorPanzoomEventHandler<T>? handler, IBlazorPanzoomEvent @event)
+            where T : IBlazorPanzoomEvent
+        {
+            handler?.Invoke((T) @event);
+            return Task.CompletedTask;
+        }
+    }
+
+
+    public record CustomWheelEventArgs
+        (double DeltaX, double DeltaY, double ClientX, double ClientY, bool ShiftKey) : IBlazorPanzoomEvent;
+
+    public class PanzoomInterop : IPanzoom, IAsyncDisposable
     {
         private readonly IJSObjectReference _jsPanzoomReference;
 
@@ -15,27 +41,16 @@ namespace BlazorPanzoom
             _jsPanzoomReference = jsPanzoomReference;
         }
 
-        public Func<ValueTask>? OnDispose { private get; init; }
-
         public IJSObjectReference JSPanzoomReference => _jsPanzoomReference;
 
-        public EventCallback<SetTransformArgs> T { get; set; }
 
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
-            if (OnRemoveListener is not null)
-            {
-                await OnRemoveListener.Invoke();
-            }
-
+            await OnDispose.InvokeAsync();
             await DestroyAsync();
-            if (OnDispose is not null)
-            {
-                await OnDispose();
-            }
-
             await _jsPanzoomReference.DisposeAsync();
+            DisposeAllEventHandlers();
         }
 
         public async ValueTask PanAsync(double x, double y, IPanOnlyOptions? overridenOptions = default)
@@ -65,7 +80,8 @@ namespace BlazorPanzoom
                 overridenZoomOptions);
         }
 
-        public async ValueTask ZoomWithWheelAsync(WheelEventArgs args, IZoomOnlyOptions? overridenOptions = default)
+        public async ValueTask ZoomWithWheelAsync(CustomWheelEventArgs args,
+            IZoomOnlyOptions? overridenOptions = default)
         {
             var currentOptions = await GetOptionsAsync();
             var currentScale = await GetScaleAsync();
@@ -126,23 +142,29 @@ namespace BlazorPanzoom
             await _jsPanzoomReference.InvokeVoidAsync("destroy");
         }
 
-        public EventCallback<WheelEventArgs> OnWheel { get; set; }
-
-
-        public Func<ValueTask>? OnRemoveListener { get; set; }
-
-        [JSInvokable]
-        public async ValueTask OnCustomWheelEvent(WheelEventArgs args)
-        {
-            await OnWheel.InvokeAsync(args);
-        }
-
+        public event BlazorPanzoomEventHandler<CustomWheelEventArgs>? OnCustomWheel;
+        public event BlazorPanzoomEventHandler<SetTransformEventArgs>? OnSetTransform;
+        public event BlazorPanzoomEventHandler? OnDispose;
 
         [JSInvokable]
-        public async ValueTask OnSetTransform(SetTransformArgs args)
+        public async ValueTask OnCustomWheelEvent(CustomWheelEventArgs args)
         {
-            await T.InvokeAsync(args);
+            await OnCustomWheel.InvokeAsync(args);
         }
+
+        [JSInvokable]
+        public async ValueTask OnSetTransformEvent(SetTransformEventArgs args)
+        {
+            await OnSetTransform.InvokeAsync(args);
+        }
+
+        private void DisposeAllEventHandlers()
+        {
+            OnCustomWheel = null;
+            OnSetTransform = null;
+            OnDispose = null;
+        }
+
 
         protected bool Equals(PanzoomInterop other)
         {

@@ -20,7 +20,7 @@
 
     private async Task OnResetClick(MouseEventArgs args) => await _panzoom.ResetAsync();
 
-    private async Task OnWheel(WheelEventArgs args)
+    private async Task OnWheel(CustomWheelEventArgs args)
     {
         if (!args.ShiftKey)
         {

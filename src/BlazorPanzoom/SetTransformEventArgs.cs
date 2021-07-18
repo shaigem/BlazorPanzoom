@@ -1,6 +1,6 @@
 ﻿namespace BlazorPanzoom
 {
-    public class SetTransformArgs
+    public class SetTransformEventArgs : IBlazorPanzoomEvent
     {
         public double X { get; set; }
         public double Y { get; set; }
