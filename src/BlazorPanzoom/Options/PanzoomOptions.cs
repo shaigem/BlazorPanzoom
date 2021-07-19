@@ -15,6 +15,7 @@ namespace BlazorPanzoom
         public const string DefaultEasing = "ease-in-out";
         public const string DefaultOrigin = "50% 50%";
         public const Overflow DefaultOverflow = BlazorPanzoom.Overflow.Hidden;
+        public const string DefaultExcludeClass = "panzoom-exclude";
 
         private static readonly ElementReference[] EmptyExcludedReferences = Array.Empty<ElementReference>();
 
@@ -141,7 +142,7 @@ namespace BlazorPanzoom
             return Exclude ?? elementReferences ?? EmptyExcludedReferences;
         }
 
-        public string GetExcludeClassOrDefault(string excludeClass = "")
+        public string GetExcludeClassOrDefault(string excludeClass = DefaultExcludeClass)
         {
             return ExcludeClass ?? excludeClass;
         }

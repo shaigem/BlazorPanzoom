@@ -4,7 +4,7 @@
         <ResolveStaticWebAssetsInputsDependsOn>
             $(ResolveStaticWebAssetsInputsDependsOn);
         </ResolveStaticWebAssetsInputsDependsOn>
-        <PackageVersion>0.1.0</PackageVersion>
+        <PackageVersion>0.2.0</PackageVersion>
         <Description>Blazor wrapper for timmywil's panzoom library that helps you enable zooming and panning of Blazor components and elements easier.</Description>
         <Copyright>Copyright 2021 Ronnie Tran</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
