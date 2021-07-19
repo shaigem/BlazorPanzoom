@@ -1,4 +1,5 @@
 # BlazorPanzoom
+[![Nuget version](https://img.shields.io/nuget/v/BlazorPanzoom)](https://www.nuget.org/packages/BlazorPanzoom/)
 
 BlazorPanzoom is a library for Blazor that wraps around timmywil's JavaScript
 library, [panzoom](https://github.com/timmywil/panzoom). It provides an easy way to enable panning and zooming of web
@@ -32,7 +33,11 @@ The list below shows which examples have been implemented.
 
 ## Installation
 
-TODO how do you get the package/library?
+Install the NuGet package:
+
+```
+dotnet add package BlazorPanzoom
+```
 
 Add the following to `_Imports.razor`
 ```razor
