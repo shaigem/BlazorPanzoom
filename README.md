@@ -49,12 +49,28 @@ Add the following to `index.html` (client-side) or `_Host.cshtml` (server-side) 
 <script src="_content/BlazorPanzoom/blazorpanzoom.js"></script>
 ```
 #### Client-Side Config (WebAssembly)
-Add the following in `Program.cs` in the place you add services
+In `Program.cs`...
+
+Import the following
+```c#
+using BlazorPanzoom;
+```
+And then add the following to where you register your services
 ```c#
 builder.Services.AddBlazorPanzoomServices();
 ```
 #### Server-Side Config
-Add the following to `Startup.cs` in the place you add services
+Import the following
+```c#
+using BlazorPanzoom;
+```
+In `Startup.cs`...
+
+Import the following
+```c#
+using BlazorPanzoom;
+```
+And then add the following to where you register your services
 ```c#
 builder.Services.AddBlazorPanzoomServices();
 ```
