@@ -45,7 +45,7 @@ Add the following to `_Imports.razor`
 ```
 Add the following to `index.html` (client-side) or `_Host.cshtml` (server-side) in `body`
 ```razor
-<script src="_content/BlazorPanzoom/panzoom-4.4.1.min.js"></script>
+<script src="_content/BlazorPanzoom/panzoom.min.js"></script>
 <script src="_content/BlazorPanzoom/blazorpanzoom.js"></script>
 ```
 #### Client-Side Config (WebAssembly)
