@@ -30,17 +30,17 @@ namespace BlazorPanzoom
             await _jsPanzoomReference.InvokeVoidAsync("pan", x, y, overridenOptions);
         }
 
-        public async ValueTask ZoomInAsync()
+        public async ValueTask ZoomInAsync(IZoomOnlyOptions? options = default)
         {
             await _jsPanzoomReference.InvokeVoidAsync("zoomIn");
         }
 
-        public async ValueTask ZoomOutAsync()
+        public async ValueTask ZoomOutAsync(IZoomOnlyOptions? options = default)
         {
             await _jsPanzoomReference.InvokeVoidAsync("zoomOut");
         }
 
-        public async ValueTask ZoomAsync(double toScale)
+        public async ValueTask ZoomAsync(double toScale, IZoomOnlyOptions? options = default)
         {
             await _jsPanzoomReference.InvokeVoidAsync("zoom", toScale);
         }
@@ -74,18 +74,14 @@ namespace BlazorPanzoom
             await ZoomToPointAsync(constrainedScale, args.ClientX, args.ClientY, overridenOptions);
         }
 
-        public async ValueTask ResetAsync(PanzoomOptions resetOptions)
-        {
-            await _jsPanzoomReference.InvokeVoidAsync("reset");
-        }
-
-        public async ValueTask ResetAsync()
+        public async ValueTask ResetAsync(PanzoomOptions? options = default)
         {
             await _jsPanzoomReference.InvokeVoidAsync("reset");
         }
 
         public async ValueTask SetOptionsAsync(PanzoomOptions options)
         {
+            // TODO not allowed to set Force option
             await _jsPanzoomReference.InvokeVoidAsync("setOptions", options);
         }
 
@@ -102,6 +98,11 @@ namespace BlazorPanzoom
         public async ValueTask<ReadOnlyFocalPoint> GetPanAsync()
         {
             return await _jsPanzoomReference.InvokeAsync<ReadOnlyFocalPoint>("getPan");
+        }
+
+        public async ValueTask ResetStyleAsync()
+        {
+            await _jsPanzoomReference.InvokeVoidAsync("resetStyle");
         }
 
         public async ValueTask SetStyleAsync(string name, string value)
@@ -136,7 +137,6 @@ namespace BlazorPanzoom
             OnSetTransform = null;
             OnDispose = null;
         }
-
 
         protected bool Equals(PanzoomInterop other)
         {

@@ -1,83 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using BlazorPanzoom.Converters;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorPanzoom
 {
-    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
-    public enum Cursor
+    public record PanzoomOptions : IZoomOnlyOptions, IPanOnlyOptions, IMiscOnlyOptions
     {
-        [JsonPropertyName("alias")] Alias,
-        [JsonPropertyName("all-scroll")] AllScroll,
-        [JsonPropertyName("auto")] Auto,
-        [JsonPropertyName("cell")] Cell,
-        [JsonPropertyName("context-menu")] ContextMenu,
-        [JsonPropertyName("col-resize")] ColResize,
-        [JsonPropertyName("copy")] Copy,
-        [JsonPropertyName("crosshair")] CrossHair,
-        [JsonPropertyName("default")] Default,
-        [JsonPropertyName("e-resize")] EResize,
-        [JsonPropertyName("ew-resize")] EwResize,
-        [JsonPropertyName("grab")] Grab,
-        [JsonPropertyName("grabbing")] Grabbing,
-        [JsonPropertyName("help")] Help,
-        [JsonPropertyName("move")] Move,
-        [JsonPropertyName("n-resize")] NResize,
-        [JsonPropertyName("ne-resize")] NeResize,
-        [JsonPropertyName("nesw-resize")] NeswResize,
-        [JsonPropertyName("ns-resize")] NsResize,
-        [JsonPropertyName("nw-resize")] NwResize,
-        [JsonPropertyName("nwse-resize")] NwseResize,
-        [JsonPropertyName("no-drop")] NoDrop,
-        [JsonPropertyName("none")] None,
-        [JsonPropertyName("not-allowed")] NotAllowed,
-        [JsonPropertyName("pointer")] Pointer,
-        [JsonPropertyName("progress")] Progress,
-        [JsonPropertyName("row-resize")] RowResize,
-        [JsonPropertyName("s-resize")] SResize,
-        [JsonPropertyName("se-resize")] SeResize,
-        [JsonPropertyName("sw-resize")] SwResize,
-        [JsonPropertyName("text")] Text,
-        [JsonPropertyName("url")] Url,
-        [JsonPropertyName("w-resize")] WResize,
-        [JsonPropertyName("wait")] Wait,
-        [JsonPropertyName("zoom-in")] ZoomIn,
-        [JsonPropertyName("zoom-out")] ZoomOut,
-    }
-
-    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
-    public enum Contain
-    {
-        [JsonPropertyName("inside")] Inside,
-        [JsonPropertyName("outside")] Outside,
-        [JsonPropertyName("none")] None
-    }
-
-    public interface IZoomOnlyOptions
-    {
-        public bool GetDisableZoomOrDefault(bool disableZoom = default);
-        public double GetMinScaleOrDefault(double minScale = PanzoomOptions.DefaultMinScale);
-        public double GetMaxScaleOrDefault(double maxScale = PanzoomOptions.DefaultMaxScale);
-        public double GetStepOrDefault(double step = PanzoomOptions.DefaultStepScale);
-    }
-
-    public interface IPanOnlyOptions
-    {
-        public Contain GetContainOrDefault(Contain contain = Contain.None);
-        public bool GetDisablePanOrDefault(bool disablePan = default);
-        public bool GetDisableXAxisOrDefault(bool disableXAxis = default);
-        public bool GetDisableYAxisOrDefault(bool disableYAxis = default);
-        public Cursor GetCursorOrDefault(Cursor cursor = Cursor.Move);
-        public bool GetPanOnlyWhenZoomedOrDefault(bool panOnlyWhenZoomed = default);
-        public bool GetRelativeOrDefault(bool relative = default);
-    }
-
-    public record PanzoomOptions : IZoomOnlyOptions, IPanOnlyOptions
-    {
-        protected internal const double DefaultMinScale = 0.125;
-        protected internal const double DefaultMaxScale = 4;
-        protected internal const double DefaultStepScale = 0.3;
+        public const double DefaultStartScale = 1;
+        public const double DefaultMinScale = 0.125;
+        public const double DefaultMaxScale = 4;
+        public const double DefaultStepScale = 0.3;
+        public const double DefaultDuration = 200;
+        public const string DefaultEasing = "ease-in-out";
+        public const string DefaultOrigin = "50% 50%";
+        public const Overflow DefaultOverflow = BlazorPanzoom.Overflow.Hidden;
 
         private static readonly ElementReference[] EmptyExcludedReferences = Array.Empty<ElementReference>();
 
@@ -104,7 +41,7 @@ namespace BlazorPanzoom
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public ElementReference[]? Exclude { private get; init; }
+        public IEnumerable<ElementReference>? Exclude { private get; init; }
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -112,7 +49,7 @@ namespace BlazorPanzoom
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public bool? Force { private get; init; }
+        public bool? Force { get; init; }
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -124,7 +61,7 @@ namespace BlazorPanzoom
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? Overflow { private get; init; }
+        public Overflow? Overflow { private get; init; }
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -144,7 +81,7 @@ namespace BlazorPanzoom
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? TouchAction { private get; init; }
+        public TouchAction? TouchAction { private get; init; }
 
         [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -198,6 +135,82 @@ namespace BlazorPanzoom
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? Relative { private get; init; }
 
+        public IEnumerable<ElementReference> GetExcludeOrDefault(
+            IEnumerable<ElementReference>? elementReferences = null)
+        {
+            return Exclude ?? elementReferences ?? EmptyExcludedReferences;
+        }
+
+        public string GetExcludeClassOrDefault(string excludeClass = "")
+        {
+            return ExcludeClass ?? excludeClass;
+        }
+
+        public bool GetForceOrDefault(bool force = default)
+        {
+            return Force ?? force;
+        }
+
+        public bool GetNoBindOrDefault(bool noBind = default)
+        {
+            return NoBind ?? noBind;
+        }
+
+        public string GetOriginOrDefault(string origin = DefaultOrigin)
+        {
+            return Origin ?? origin;
+        }
+
+        public Overflow GetOverflowOrDefault(Overflow overflow = DefaultOverflow)
+        {
+            return Overflow ?? overflow;
+        }
+
+        public bool GetSilentOrDefault(bool silent = default)
+        {
+            return Silent ?? silent;
+        }
+
+        public double GetStartScaleOrDefault(double startScale = DefaultStartScale)
+        {
+            return StartScale ?? startScale;
+        }
+
+        public double GetStartXOrDefault(double startX = default)
+        {
+            return StartX ?? startX;
+        }
+
+        public double GetStartYOrDefault(double startY = default)
+        {
+            return StartY ?? startY;
+        }
+
+        public TouchAction GetTouchActionOrDefault(TouchAction touchAction = BlazorPanzoom.TouchAction.None)
+        {
+            return TouchAction ?? touchAction;
+        }
+
+        public bool GetAnimateOrDefault(bool animate = default)
+        {
+            return Animate ?? animate;
+        }
+
+        public bool GetCanvasOrDefault(bool canvas = default)
+        {
+            return Canvas ?? canvas;
+        }
+
+        public double GetDurationOrDefault(double duration = DefaultDuration)
+        {
+            return Duration ?? duration;
+        }
+
+        public string GetEasingOrDefault(string easing = DefaultEasing)
+        {
+            return Easing ?? easing;
+        }
+
         public Contain GetContainOrDefault(Contain contain = BlazorPanzoom.Contain.None)
         {
             return Contain ?? contain;
@@ -238,6 +251,11 @@ namespace BlazorPanzoom
             return DisableZoom ?? disableZoom;
         }
 
+        public ReadOnlyFocalPoint GetFocalOrDefault(ReadOnlyFocalPoint focal = default)
+        {
+            return Focal ?? focal;
+        }
+
         public double GetMinScaleOrDefault(double minScale = DefaultMinScale)
         {
             return MinScale ?? minScale;
@@ -251,16 +269,6 @@ namespace BlazorPanzoom
         public double GetStepOrDefault(double step = DefaultStepScale)
         {
             return Step ?? step;
-        }
-
-        public ElementReference[] GetExcludeOrDefault(ElementReference[]? elementReferences)
-        {
-            return Exclude ?? elementReferences ?? EmptyExcludedReferences;
-        }
-
-        public ElementReference[] GetExcludeOrDefault()
-        {
-            return Exclude ?? EmptyExcludedReferences;
         }
     }
 }

@@ -23,9 +23,7 @@ namespace BlazorPanzoom
         [Parameter] public EventCallback<CustomWheelEventArgs> OnWheel { get; set; }
         [Parameter] public PanzoomOptions PanzoomOptions { private get; set; } = PanzoomOptions.DefaultOptions;
         [Parameter] public RenderFragment<Panzoom>? ChildContent { get; set; }
-
         [Parameter] public EventCallback<SetTransformEventArgs> SetTransform { get; set; }
-
 
         public async ValueTask DisposeAsync()
         {
@@ -38,17 +36,17 @@ namespace BlazorPanzoom
             await _underlyingPanzoomInterop.PanAsync(x, y, overridenOptions);
         }
 
-        public async ValueTask ZoomInAsync()
+        public async ValueTask ZoomInAsync(IZoomOnlyOptions? options = default)
         {
             await _underlyingPanzoomInterop.ZoomInAsync();
         }
 
-        public async ValueTask ZoomOutAsync()
+        public async ValueTask ZoomOutAsync(IZoomOnlyOptions? options = default)
         {
             await _underlyingPanzoomInterop.ZoomOutAsync();
         }
 
-        public async ValueTask ZoomAsync(double toScale)
+        public async ValueTask ZoomAsync(double toScale, IZoomOnlyOptions? options = default)
         {
             await _underlyingPanzoomInterop.ZoomAsync(toScale);
         }
@@ -59,12 +57,7 @@ namespace BlazorPanzoom
             await _underlyingPanzoomInterop.ZoomToPointAsync(toScale, clientX, clientY, overridenZoomOptions);
         }
 
-        public async ValueTask ResetAsync(PanzoomOptions resetOptions)
-        {
-            await _underlyingPanzoomInterop.ResetAsync(resetOptions);
-        }
-
-        public async ValueTask ResetAsync()
+        public async ValueTask ResetAsync(PanzoomOptions? options = default)
         {
             await _underlyingPanzoomInterop.ResetAsync();
         }
@@ -87,6 +80,11 @@ namespace BlazorPanzoom
         public async ValueTask<ReadOnlyFocalPoint> GetPanAsync()
         {
             return await _underlyingPanzoomInterop.GetPanAsync();
+        }
+
+        public async ValueTask ResetStyleAsync()
+        {
+            await _underlyingPanzoomInterop.ResetStyleAsync();
         }
 
         public async ValueTask SetStyleAsync(string name, string value)
@@ -167,21 +165,19 @@ namespace BlazorPanzoom
                 return;
             }
 
-            // 1. Get the current excluded elements from JS
-            // 2. Get the new excluded elements set by the user
-            // 3. Combine the current and new excluded elements
-            // 4. Send the combined array to JS
             var currentOptions = await GetOptionsAsync();
             var excludedElements = currentOptions.GetExcludeOrDefault();
-            var newExcludedElements = new ElementReference[excludedElements.Length + _excludedElements.Count];
-            excludedElements.CopyTo(newExcludedElements, 0);
-            _excludedElements.CopyTo(newExcludedElements, excludedElements.Length);
-            await SetOptionsAsync(new PanzoomOptions {Exclude = newExcludedElements});
-            // TODO is this the best way?
+            _excludedElements.UnionWith(excludedElements);
+            await SetOptionsAsync(new PanzoomOptions {Exclude = _excludedElements});
         }
 
         private void AddToExcludedElements(ElementReference reference)
         {
+            if (reference.IsDefault())
+            {
+                return;
+            }
+
             _excludedElements ??= new HashSet<ElementReference>();
             _excludedElements.Add(reference);
         }
