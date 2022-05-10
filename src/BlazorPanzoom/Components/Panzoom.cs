@@ -28,7 +28,10 @@ namespace BlazorPanzoom
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
-            await _underlyingPanzoomInterop.DisposeAsync();
+            if (_underlyingPanzoomInterop != null)
+            {
+                await _underlyingPanzoomInterop.DisposeAsync();
+            }
         }
 
         public async ValueTask PanAsync(double x, double y, IPanOnlyOptions? overridenOptions = default)
