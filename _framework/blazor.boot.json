@@ -7,7 +7,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "BlazorPanzoom.Demo.dll": "sha256-AeBOD9kag8X9IvgEcTBrERTWjXx47DCYQSvp0leaNK8=",
+      "BlazorPanzoom.Demo.dll": "sha256-4qWu2NReHdPiu6AiZQ2W39meolPqo5WHFssC0Rxy+xw=",
       "BlazorPanzoom.dll": "sha256-G2+b0mmyFYBd1XqALVjoI0L26loS0aluAX4Co+7kClE=",
       "Microsoft.AspNetCore.Components.dll": "sha256-5IYFLtHH+Ud1gHmnuuigu\/kM\/YUocfxPjYud8kUe9Zc=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-GXn1qDhih0oPluAYA\/QWWywcsIEcEmtuSIY2EsxPtps=",
