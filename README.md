@@ -85,7 +85,9 @@ Wrap the element that you want to enable panning and zooming for with `<Panzoom>
 <div class="my-main" style="border-style: solid;">
     <Panzoom>
         <!-- Must set the element's reference (@ref)! -->
-        <img @ref="@context.ElementReference" src="https://homepages.cae.wisc.edu/~ece533/images/pool.png" alt="image"/>
+        <img @ref="@context.ElementReference"
+             src="https://cms.uni-konstanz.de/fileadmin/archive/informatik-saupe/fileadmin/informatik/ag-saupe/Webpages/lehre/dip_w0809/pictures/pool.png"
+             alt="image"/>
     </Panzoom>
 </div>
 ```
@@ -103,7 +105,9 @@ component.
 ```html
 <div class="my-main" style="border-style: solid;">
     <Panzoom WheelMode="WheelMode.ZoomWithWheel">
-        <img @ref="@context.ElementReference" src="https://homepages.cae.wisc.edu/~ece533/images/pool.png" alt="image"/>
+        <img @ref="@context.ElementReference"
+             src="https://cms.uni-konstanz.de/fileadmin/archive/informatik-saupe/fileadmin/informatik/ag-saupe/Webpages/lehre/dip_w0809/pictures/pool.png"
+             alt="image"/>
     </Panzoom>
 </div>
 ```
