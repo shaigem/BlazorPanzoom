@@ -21,7 +21,7 @@ namespace BlazorPanzoom
 
         [Parameter] public WheelMode WheelMode { get; set; } = WheelMode.None;
         [Parameter] public EventCallback<CustomWheelEventArgs> OnWheel { get; set; }
-        [Parameter] public PanzoomOptions PanzoomOptions { private get; set; } = PanzoomOptions.DefaultOptions;
+        [Parameter] public PanzoomOptions PanzoomOptions { get; set; } = PanzoomOptions.DefaultOptions;
         [Parameter] public RenderFragment<Panzoom>? ChildContent { get; set; }
         [Parameter] public EventCallback<SetTransformEventArgs> SetTransform { get; set; }
 
